@@ -1,0 +1,5 @@
+rootProject.name = 'project-reservation'
+include 'member'
+include 'reservation-service'
+include 'infrastructure'
+

@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: member
+  thymeleaf:
+    suffix: .html
+    prefix: classpath:/templates/
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/rsv?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: reservation
+    password: 1
+
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+logging:
+  level:
+    org.springframework.security: debug
