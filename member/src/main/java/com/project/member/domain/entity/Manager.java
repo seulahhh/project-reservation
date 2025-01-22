@@ -1,5 +1,7 @@
 package com.project.member.domain.entity;
 
+import com.project.member.model.dto.CustomerDto;
+import com.project.member.model.dto.ManagerDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +18,7 @@ import java.util.Collections;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Manager implements UserDetails {
+public class Manager extends BaseEntity implements UserDetails  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,13 +26,13 @@ public class Manager implements UserDetails {
     @Column(unique = true)
     private String email;
     private String password;
-    private boolean enabled;
+    private boolean enabled = true;
 
     private String name;
     private String phone;
 
-    private Double lat;
-    private Double lnt;
+    @OneToOne(mappedBy = "manager")
+    private Store store;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities () {
@@ -41,4 +43,5 @@ public class Manager implements UserDetails {
     public String getUsername () {
         return email;
     }
+
 }

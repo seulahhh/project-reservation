@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,7 +38,9 @@ public class SecurityConfig {
                          .defaultSuccessUrl("/customer/home", true)// 로그인 성공
                          // 후 기본 리다이렉션 경로
                          .failureUrl("/customer/login"); // 로그인 실패 시 경로
-                });
+                })
+                .httpBasic(httpBasic -> httpBasic.realmName("myapp"));
+
         return http.build();
     }
 
@@ -58,7 +61,9 @@ public class SecurityConfig {
                          .defaultSuccessUrl("/manager/home", true) // 로그인 성공
                          // 후 기본 리다이렉션 경로
                          .failureUrl("/manager/login"); // 로그인 실패 시 경로
-                });
+                })
+                .httpBasic(httpBasic -> httpBasic.realmName("myapp"));
+
 
         return http.build();
     }
@@ -78,10 +83,10 @@ public class SecurityConfig {
                 .logout(logout -> {
                             logout.logoutSuccessUrl("/")
                                   .logoutUrl("/logout")
-                                  .invalidateHttpSession(true)
-                                  .clearAuthentication(true);
+                                  .invalidateHttpSession(true);
                         }
-                );
+                )
+                .httpBasic(httpBasic -> httpBasic.realmName("myapp"));
 
         return http.build();
     }

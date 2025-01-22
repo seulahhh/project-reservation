@@ -1,13 +1,15 @@
-package com.project.member.auth.service;
+package com.project.member.service;
 
 import com.project.member.domain.entity.Customer;
 import com.project.member.domain.entity.Manager;
 import com.project.member.domain.repository.CustomerRepository;
 import com.project.member.domain.repository.ManagerRepository;
-import com.project.member.model.dto.SignupForm;
+import com.project.member.model.dto.form.SignupForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 @RequiredArgsConstructor

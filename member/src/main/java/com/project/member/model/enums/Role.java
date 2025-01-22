@@ -3,6 +3,9 @@ package com.project.member.model.enums;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 아직 사용 X
+ */
 @Getter
 @RequiredArgsConstructor
 public enum Role {

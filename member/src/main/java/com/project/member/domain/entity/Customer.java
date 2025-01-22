@@ -1,5 +1,6 @@
 package com.project.member.domain.entity;
 
+import com.project.member.model.dto.ManagerDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Customer implements UserDetails {
+public class Customer extends BaseEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,7 +28,7 @@ public class Customer implements UserDetails {
     private String email;
 
     private String password;
-    private boolean enabled;
+    private boolean enabled = true;
 
     private String name;
 
@@ -44,5 +45,16 @@ public class Customer implements UserDetails {
     @Override
     public String getUsername () {
         return email;
+    }
+
+    public static Customer from(Customer dto) {
+        return Customer.builder()
+                .email(dto.getEmail())
+                .phone(dto.getPhone())
+                .password(dto.getPassword())
+                .name(dto.getName())
+                .lat(dto.getLat())
+                .lnt(dto.getLnt())
+                .build();
     }
 }
