@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login</title>
+</head>
+<body>
+
+<!--<form th:if="${userRole.equals('MANAGER')}" th:action="@{/manager/login}" method="post">-->
+
+
+<form th:if="${isCustomer}" th:action="@{/customer/login}" method="post">
+    <div>
+        <label for="cname">Username:</label>
+        <input type="text" id="cname" name="username" required>
+    </div>
+    <div>
+        <label for="cpassword">Password:</label>
+        <input type="password" id="cpassword" name="password" required>
+    </div>
+    <button type="submit">Login</button>
+</form>
+
+<form th:if="${isManager}" th:action="@{/manager/login}" method="post">
+    <div>
+        <label for="musername">Username:</label>
+        <input type="text" id="musername" name="username" required>
+    </div>
+    <div>
+        <label for="mpassword">Password:</label>
+        <input type="password" id="mpassword" name="password" required>
+    </div>
+    <button type="submit">Login</button>
+</form>
+</body>
+</html>
