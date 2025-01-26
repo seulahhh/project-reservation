@@ -1,0 +1,11 @@
+<li th:fragment="processedSection" th:each="store : ${processedData}">
+    <ul class="flex-box">
+        <li th:text="${store.getName()}"></li>
+        <li th:text="${store.getRating()}"></li>
+        <li th:text="${store.getDistance()}"></li>
+        <li>
+            <a class="detail custom-button"
+               th:href="@{/customer/stores/detail/${store.getId()}}">DETAILS</a>
+        </li>
+    </ul>
+</li>
