@@ -1,16 +1,15 @@
 package com.project.member.service;
 
-import com.project.member.model.dto.LocationDto;
 import com.project.member.model.dto.LoginForm;
 import com.project.member.model.dto.ReviewDto;
-import com.project.member.model.dto.StoreDto;
 import com.project.member.model.types.Message;
-import com.project.member.persistence.entity.*;
+import com.project.member.persistence.entity.Customer;
+import com.project.member.persistence.entity.QReview;
+import com.project.member.persistence.entity.Review;
+import com.project.member.persistence.entity.Store;
 import com.project.member.persistence.repository.CustomerRepository;
 import com.project.member.persistence.repository.ReviewRepository;
 import com.project.member.persistence.repository.StoreRepository;
-import com.project.member.util.DistanceCalculator;
-import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.OptionalDouble;
 
 import static com.project.member.model.types.Message.*;
 
@@ -130,7 +128,7 @@ public class CustomerService {
 //    public List<Review> getMyReviews (Long customerId) {
 //        QReview review = QReview.review;
 //        return queryFactory.selectFrom(review)
-//                           .where(review.customer.id.eq(customerId))
+//                       w    .where(review.customer.id.eq(customerId))
 //                           .fetch();
 //    }
 

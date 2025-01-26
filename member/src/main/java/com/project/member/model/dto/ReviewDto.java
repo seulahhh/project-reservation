@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @ToString
 public class ReviewDto {
-    private Long Id;
+    private Long id;
 
     private String title;
     private String body;
@@ -23,6 +23,7 @@ public class ReviewDto {
 
     public static ReviewDto from (Review review) {
         return ReviewDto.builder()
+                .id(review.getId())
                 .title(review.getTitle())
                 .body(review.getBody())
                 .rating(review.getRating())

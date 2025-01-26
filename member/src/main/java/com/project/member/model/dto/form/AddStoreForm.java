@@ -10,8 +10,6 @@ import lombok.*;
 public class AddStoreForm {
     private String name;
 
-    private Long managerId;
-
     private String number;
 
     private Double lat;

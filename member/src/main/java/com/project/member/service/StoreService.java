@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
+// customer가 보는 매장 위주
 @Service
 @RequiredArgsConstructor
 public class StoreService {
@@ -118,5 +118,4 @@ public class StoreService {
         store.setRating(storeRating);
         System.out.println("별점 업데이트 완료");
     }
-
 }

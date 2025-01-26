@@ -1,0 +1,35 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Register Store</title>
+</head>
+<body>
+<h1> 매장 등록하는 페이지 </h1>
+<div class="flex-box">
+    <form th:action="@{/manager/store/new}" method="post">
+        <div>
+            <label for="name">매장 이름: </label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div>
+            <label for="number">매장 번호: </label>
+            <input type="number" id="number" name="number" required>
+        </div>
+        <div>
+            <label for="lat">매장 좌표 (LAT): </label>
+            <input type="text" id="lat" required>
+        </div>
+        <div>
+            <label for="lnt">매장 좌표 (LNT): </label>
+            <input type="text" id="lnt" name="lnt" required>
+        </div>
+
+        <button type="submit">매장 등록</button>
+    </form>
+</div>
+</body>
+</html>

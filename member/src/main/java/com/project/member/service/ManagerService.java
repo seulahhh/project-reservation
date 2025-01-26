@@ -1,21 +1,25 @@
 package com.project.member.service;
 
 import com.project.member.model.dto.ReviewDto;
+import com.project.member.model.dto.StoreDto;
 import com.project.member.model.dto.form.AddStoreForm;
 import com.project.member.model.types.Message;
 import com.project.member.persistence.entity.Manager;
+import com.project.member.persistence.entity.QManager;
 import com.project.member.persistence.entity.Review;
 import com.project.member.persistence.entity.Store;
 import com.project.member.persistence.repository.ManagerRepository;
 import com.project.member.persistence.repository.ReviewRepository;
 import com.project.member.persistence.repository.StoreRepository;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.project.member.model.types.Message.ADD_COMPLETE;
 import static com.project.member.model.types.Message.DELETE_COMPLETE;
 
 @Service
@@ -25,84 +29,81 @@ public class ManagerService {
     private final StoreRepository storeRepository;
     private final ManagerRepository managerRepository;
     private final ReviewRepository reviewRepository;
-
+    private final JPAQueryFactory queryFactory;
+    QManager qManager = QManager.manager;
     // ----------------- 메인 서비스 로직 시작
     // manager
 
     /**
      * 자신의 매장 등록하기
+     * Exception O
      */
     @Transactional
-    public Message addStore (AddStoreForm form) {
-        if (storeRepository.findByManager_Id(form.getManagerId())
+    public String addStore (AddStoreForm form) {
+        Long managerId = getManagerId();
+        if (storeRepository.findByManager_Id(managerId)
                            .isPresent()) {
-            throw new RuntimeException("이미 등록한 매장이 있습니다.");
+            throw new RuntimeException("이미 등록한 매장이 있습니다."); // todo
         }
-        Manager manager = getManagerFromId(form.getManagerId());
-
         Store store = Store.builder()
                 .name(form.getName())
-                .manager(manager)
+                .manager(getManagerFromId(managerId))
                 .number(form.getNumber())
                 .lat(form.getLat())
                 .lnt(form.getLnt())
                 .build();
-        storeRepository.save(store);
 
-        return ADD_COMPLETE;
+        storeRepository.save(store);
+        return store.getName();
+    }
+
+    /**
+     * 자신의 매장 가져오기
+     * - 상세정보 포함, 리뷰 리스트 포함
+     * - 리뷰 리스트가 주가 됨
+     * Exception O
+     */
+    public StoreDto getManagerStore () {
+        Long managerId = getManagerId();
+        Store store = storeRepository.findByManager_Id(managerId)
+                                     .orElseThrow(() -> new RuntimeException(
+                                             "매장 정보가 없습니다"));
+
+        return StoreDto.from(store);
     }
 
     /**
      * 자신의 매장 삭제하기
+     * Exception O
      */
     @Transactional
-    public Message deleteStore (Long storeId) {
+    public void deleteStore (Long storeId) {
         Store store = storeRepository.findById(storeId)
-                                     .orElseThrow(() ->
-                                                          new RuntimeException("해당 매장을 찾을 수 없습니다")); // todo custom exception
+                                     .orElseThrow(() -> new RuntimeException(
+                                             "해당 매장을 찾을 수 없습니다")); // todo
+        // custom exception
         storeRepository.delete(store);
-
-        return DELETE_COMPLETE;
     }
 
-    // 매장 수정하기
-    // todo 추후 수정 기능 필요시 추가
 
-    // 본인 매장 리뷰 보기
-    public List<ReviewDto> showMyStoreReviews (Long managerId) {
-        List<Review> myStoreReviews = getMyStoreReviews(managerId);
-        return myStoreReviews.stream()
-                             .map(ReviewDto::from)
-                             .toList();
-        // todo List 보여주는 로직
-    }
-
-    // 본인 매장 리뷰 삭제하기
-    // todo 공통로직으로 사용 고려
+    /**
+     * 매장 리뷰 삭제하기
+     * Exception O
+     */
     @Transactional
     public void deleteReview (Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
-                                        .orElseThrow(() ->
-                                                             new RuntimeException("리뷰 삭제 에러")); // todo exception처리 수정필요
-        reviewRepository.delete(review);
+                                        .orElseThrow(() -> new RuntimeException("리뷰가 존재하지 않습니다.")); // todo exception처리 수정필요
+        Long loginId = getManagerId();
+        if (review.getStore().getManager().getId() != loginId) {
+            // 권한 없으면
+            throw new RuntimeException("리뷰를 삭제할 수 있는 권한이 없습니다"); // todo customExcpeton
+        }
+        reviewRepository.deleteById(review.getId());
         // todo 리뷰삭제 시 store의 rate update
     }
 
     // ----------------- 메인 서비스 로직 끝
-
-    // 리뷰
-
-    /**
-     * 자신의 매장 리뷰 가져오기
-     */
-    // todo reviewDto로 변환 후 반환 필요
-    public List<Review> getMyStoreReviews (Long managerId) {
-        Store store = storeRepository.findByManager_Id(managerId)
-                                     .orElseThrow(() ->
-                                                          new RuntimeException("해당 매장이 없습니다"));
-
-        return store.getReviews();
-    }
 
     /**
      * Manager Id로 Manager(entity) 가져오기
@@ -110,5 +111,20 @@ public class ManagerService {
     public Manager getManagerFromId (Long managerId) {
         return managerRepository.findById(managerId)
                                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다")); // todo customeException
+    }
+
+    /**
+     * 현재 로그인한 manager의 정보로 managerId 가져오기
+     */
+    public Long getManagerId () {
+        // 사용자가 Manager인지는 url을 통해 SpringSecurity로 1차 유효성 검사가 끝난 상태
+        String email = SecurityContextHolder.getContext()
+                                            .getAuthentication()
+                                            .getName();
+
+        Manager manager = managerRepository.findByEmail(email)
+                                           .orElseThrow(() -> new RuntimeException("인증정보가 잘못되었습니다")); // todo 거의 없을 일 같지만 일단 보류
+
+        return manager.getId();
     }
 }

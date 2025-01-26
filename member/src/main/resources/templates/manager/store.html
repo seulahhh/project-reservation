@@ -6,28 +6,39 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <script src="/js/geo.js"></script>
+
 <!--    /manager/store  -->
 </head>
-
 <body>
-<button id="geoResult"></button>
-manager의 매장 조회 페이지!
-<!--<input type="hidden" id="lat">-->
-<!--<input type="hidden" id="lnt">-->
-<!--<input id="sortByDistance" type="submit" onclick="getLocation();" value="sort by distance">-->
-<!--<a th:href="@{/customer/stores/search?sort=name}">이름순으로 조회</a>-->
-<!--<a th:href="@{/customer/stores/search?sort=rating}">별점순으로 조회</a>-->
-<!--<a th:href="@{/customer/stores/search?sort=distance}">거리순으로 조회</a>-->
-<!--<div id="loading" style="display:none">로딩중..</div>-->
-<!--<div id="resultBox">-->
-<!--    <ul id="listContainer">-->
-<!--        <li th:each="store : ${storeDtoList}" th:text="${store.getName()} + '별점 =' + ${store.getRating()} + '입니다'"></li>-->
-<!--    </ul>-->
-<!--    <ul th:fragment="processedSection" id="resultContainer" th:replace="~{customer/storeFragments :: processedSection}">-->
-<!--    </ul>-->
-<!--</div>-->
+manager의 매장 보기 페이지!
 
-
+    <ul>
+        <li>
+            <span>매장 이름 :</span>
+            <span th:text="${storeDto.getName()}"></span>
+        </li>
+        <li>
+            <span>매장 번호 :</span>
+            <span th:text="${storeDto.getNumber()}"></span>
+        </li>
+        <li>
+            <span>매장 별점 :</span>
+            <span th:text="${storeDto.getRating()}"></span>
+        </li>
+        <li>
+            <p>매장 리뷰</p>
+            <ul th:each="review : ${storeDto.getReviews()}">
+                <li th:text="'제목' + ${review.getTitle()}"></li>
+                <li th:text="'내용' + ${review.getBody()}"></li>
+                <li th:text="'별점' + ${review.getRating()}"></li>
+                <li>
+                    <form th:action="@{/manager/store/reviews/{reviewId}(reviewId=${review.getId()})}" th:method="delete">
+                        <input type="hidden">
+                        <button type="submit">삭제</button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+    </ul>
 </body>
 </html>
