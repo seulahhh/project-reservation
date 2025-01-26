@@ -1,97 +1,122 @@
 package com.project.member.service;
 
-import com.project.member.domain.entity.Manager;
-import com.project.member.domain.entity.Review;
-import com.project.member.domain.entity.Store;
-import com.project.member.domain.repository.ManagerRepository;
-import com.project.member.domain.repository.ReviewRepository;
-import com.project.member.domain.repository.StoreRepository;
-import com.project.member.model.dto.ReviewDto;
-import com.project.member.model.dto.form.AddStoreForm;
-import com.project.member.model.enums.Message;
+import com.project.member.model.dto.LocationDto;
+import com.project.member.model.dto.StoreDto;
+import com.project.member.persistence.entity.QStore;
+import com.project.member.persistence.entity.Store;
+import com.project.member.persistence.repository.ReviewRepository;
+import com.project.member.persistence.repository.StoreRepository;
+import com.project.member.util.DistanceCalculator;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-
-import static com.project.member.model.enums.Message.*;
 
 @Service
 @RequiredArgsConstructor
-
 public class StoreService {
+    private final JPAQueryFactory queryFactory;
     private final StoreRepository storeRepository;
-    private final ManagerRepository managerRepository;
     private final ReviewRepository reviewRepository;
+    QStore qStore = QStore.store; // todo 추후 테스트 과정에서 문제시 지역변수로 전환
 
-// ----------------- 메인 서비스 로직 시작
-    // manager
-    // 매장 등록하기
-    @Transactional
-    public Message addStore (AddStoreForm form) {
-        Manager manager = getManagerFromId(form.getManagerId());
+    /**
+     * sort store
+     * - 거리순
+     */
+    public List<StoreDto> showOrderByDistanceAsc (LocationDto locationDto) {
+        NumberExpression<Double> distance = getDistance(locationDto);
+        List<StoreDto> resultList =
+                queryFactory.select(Projections.fields(
+                                    StoreDto.class,
+                                    qStore.id, qStore.name
+                                    , qStore.number, qStore.rating,
+                                    distance.as("distance")))
+                            .from(qStore)
+                            .orderBy(distance.asc())
+                            .fetch();
 
-        Store store = Store.builder()
-                .name(form.getName())
-                .manager(manager)
-                .number(form.getNumber())
-                .lat(form.getLat())
-                .lnt(form.getLnt())
-                .build();
-        storeRepository.save(store);
-
-        return ADD_COMPLETE;
+        if (resultList.isEmpty()) {
+            throw new RuntimeException("존재하는 데이터가 없습니다");
+        }
+        // 반환된 거리값을 가지고 querydsl을 사용하여 정렬 후 List로 반환
+        return resultList;
     }
 
-    // 매장 삭제하기
+    /**
+     * sort store - asc
+     * - 이름순
+     */
+    public List<StoreDto> showOrderByNameAsc () {
+        List<Store> resultList = queryFactory.selectFrom(qStore)
+                                             .orderBy(qStore.name.asc())
+                                             .fetch();
+        if (resultList.isEmpty()) {
+            throw new RuntimeException("존재하는 데이터가 없습니다");
+        }
+        return StoresToDtoList(resultList);
+    }
+
+    /**
+     * sort store
+     * - 별점순
+     */
     @Transactional
-    public Message deleteStore (Long storeId) {
+    public List<StoreDto> showOrderByRatingAsc () {
+        List<Store> resultList = queryFactory.selectFrom(qStore)
+                                             .orderBy(qStore.rating.asc())
+                                             .fetch();
+        if (resultList.isEmpty()) {
+            throw new RuntimeException("존재하는 데이터가 없습니다");
+        }
+        resultList.forEach(store -> updateStoreRating(store.getId()));
+
+        return StoresToDtoList(resultList);
+    }
+
+    /**
+     * 거리 계산하기
+     *
+     * @param locationDto 요청으로 받은 좌표
+     * @return Q클래스 반환
+     */
+    public NumberExpression<Double> getDistance (LocationDto locationDto) {
+
+        return DistanceCalculator.calculate(locationDto.getLat(),
+                                            locationDto.getLnt(), qStore);
+    }
+
+    /**
+     * Entity -> Dto mapping
+     */
+    public List<StoreDto> StoresToDtoList (List<Store> stores) {
+        return stores.stream()
+                     .map(StoreDto::from)
+                     .toList();
+    }
+
+    /**
+     * 매장 별점 update
+     * - 리뷰 C/U/D 할 때 호출
+     * - 리뷰 별점으로 조회할 때 한번 호출
+     *
+     * @param storeId 매장 id
+     */
+    @Transactional
+    public void updateStoreRating (Long storeId) {
+        Double storeRating =
+                reviewRepository.findAverageRatingByStore_Id(storeId)
+                                .orElse(0.0);
         Store store = storeRepository.findById(storeId)
-                                     .orElseThrow(() ->
-                                                          new RuntimeException("해당 매장을 찾을 수 없습니다")); // todo custom exception
-        storeRepository.delete(store);
+                                     .orElseThrow(() -> new RuntimeException(
+                                             "Not Found Store"));
 
-        return DELETE_COMPLETE;
+        store.setRating(storeRating);
+        System.out.println("별점 업데이트 완료");
     }
 
-    // 매장 수정하기
-    // todo 추후 수정 기능 필요시 추가
-
-    // 내 매장 리뷰 보기
-    public List<ReviewDto> showMyStoreReviews (Long managerId) {
-        List<Review> myStoreReviews = getMyStoreReviews(managerId);
-        return myStoreReviews.stream()
-                                             .map(ReviewDto::from)
-                                             .toList();
-        // todo List 보여주는 로직
-    }
-
-    // 내 매장 리뷰 삭제하기
-    // todo 공통로직으로 사용 고려
-    @Transactional
-    public void deleteReview (Long reviewId) {
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
-                new RuntimeException("리뷰 삭제 에러")); // todo exception처리 수정필요
-        reviewRepository.delete(review);
-    }
-// ----------------- 메인 서비스 로직 끝
-
-    // 내매장 리뷰 가져오기
-    public List<Review> getMyStoreReviews (Long managerId) {
-        Store store = storeRepository.findByManager_Id(managerId).orElseThrow(() ->
-                new RuntimeException("해당 매장이 없습니다"));
-
-        return store.getReviews();
-    }
-
-    // store manager id 받아와서 entity로 반환
-    @Transactional
-    public Manager getManagerFromId (Long managerId) {
-        return managerRepository.findById(managerId)
-                                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다")); // todo customeException
-    }
-    // customer
-    // 매장 조회하기
 }

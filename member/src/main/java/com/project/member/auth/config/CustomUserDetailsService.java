@@ -1,9 +1,7 @@
 package com.project.member.auth.config;
 
-import com.project.member.domain.entity.Customer;
-import com.project.member.domain.entity.Manager;
-import com.project.member.domain.repository.CustomerRepository;
-import com.project.member.domain.repository.ManagerRepository;
+import com.project.member.persistence.repository.CustomerRepository;
+import com.project.member.persistence.repository.ManagerRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

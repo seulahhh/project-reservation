@@ -1,30 +1,33 @@
 package com.project.member.model.dto;
 
-import com.project.member.domain.entity.Review;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import com.project.member.persistence.entity.Review;
+import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Builder
+@Setter
 @AllArgsConstructor
 @RequiredArgsConstructor
+@ToString
 public class ReviewDto {
+    private Long Id;
+
     private String title;
     private String body;
-    private LocalDateTime createAt;
-    private LocalDateTime modifiedAt;
+    private Double rating;
+
+    private Long storeId;
+    private Long customerId;
 
     public static ReviewDto from (Review review) {
         return ReviewDto.builder()
                 .title(review.getTitle())
                 .body(review.getBody())
-                .createAt(review.getCreateAt())
-                .modifiedAt(review.getModifiedAt())
+                .rating(review.getRating())
+                .storeId(review.getStore().getId())
+                .customerId(review.getCustomerId())
                 .build();
     }
 }

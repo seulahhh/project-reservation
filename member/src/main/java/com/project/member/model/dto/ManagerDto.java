@@ -1,9 +1,6 @@
 package com.project.member.model.dto;
 
-import com.project.member.domain.entity.Manager;
-import com.project.member.domain.entity.Store;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.project.member.persistence.entity.Store;
 import lombok.Getter;
 
 @Getter

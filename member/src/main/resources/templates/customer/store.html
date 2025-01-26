@@ -1,0 +1,148 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Nanum Gothic";
+            border-collapse: collapse;
+        }
+        ol, ul, li {
+            list-style: none;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        button {
+            text-decoration: none;
+        }
+        .flex-box {
+            display: flex;
+
+        }
+        .flex-box > li{
+            flex: 1;
+            text-align: center;
+            justify-content: space-between;
+            align-content: center;
+            height: 3rem;
+        }
+        .list-container > li:nth-child(2n) {
+            background-color: #fafafa;
+        }
+        .custom-button {
+            border: 1px solid gray;
+            padding: 4px 10px;
+            border-radius: .5em;
+            box-shadow: #6e6e6e 1px 1px 3px 0;
+            background-color: #ffffff;
+            position: relative;
+            left: -1px;
+            top: -1px;
+            transition-duration:  .2s;
+            cursor: pointer;
+            font-size: .9rem;
+        }
+        .custom-button:hover {
+            box-shadow: none;
+            left: 0;
+            top: 0;
+            transition-duration:  .2s;
+            background-color: #ebf3ff;
+        }
+        .button-container {
+            display: flex;
+            min-width: 400px;
+            margin-left: auto;
+            justify-content: space-between;
+            align-content: center;
+        }
+        li > .custom-button {
+            display: block;
+            width: fit-content;
+            margin: 0 auto;
+        }
+        .display-container {
+            max-width: 80%;
+        }
+        .section {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            border: 1px dotted #adadad; /* 수정필요 */
+            width: 80vw;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .list-head {
+            background-color: rgba(159, 159, 159, 0.16);
+            border: 1px solid #b6b6b6;
+            font-weight: 600;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+
+        }
+        .list-container {
+            border: 1px solid #b6b6b6;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            overflow: hidden;
+        }
+        .list-header {
+        }
+    </style>
+    <script src="/js/geo.js"></script>
+</head>
+<!--id는 카멜케이스 사용 / class 는 케밥케이스 사용-->
+<body>
+<div class="section">
+    <div  class="button-container">
+        <a class="custom-button" th:href="@{/customer/stores/search?sort=name}">이름순으로 조회</a>
+        <a class="custom-button" th:href="@{/customer/stores/search?sort=rating}">별점순으로 조회</a>
+        <a class="custom-button" onclick="getLocation()">거리순으로 조회</a>
+    </div>
+    <div id="resultBox" class="display-container">
+        <ul class="list-header">
+            <li class="list-head">
+                <ul class="flex-box">
+                    <li>이름</li>
+                    <li>별점</li>
+                    <li>거리 (km)</li>
+                    <li></li>
+                </ul>
+            </li>
+        </ul>
+        <ul id="listContainer" class="list-container">
+            <li id="list-el" th:each="store : ${storeDtoList}">
+                <ul class="flex-box">
+                    <li th:text="${store.getName()}"></li>
+                    <li th:text="${store.getRating()}"></li>
+                    <li th:text="${store.getDistance()}"></li>
+                    <li>
+                        <a class="detail custom-button" th:href="@{/customer/stores/detail/{id}(id=${store.getId()})}">DETAILS</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <ul id="dynamicContainer" class="list-container" style="display: none">
+            <li id="loading" style="display: block">
+                <ul class="flex-box">
+                    <li>... 위치 정보 불러오는 중 ...</li>
+                </ul>
+            </li>
+            <li th:fragment="processedSection" id="resultContainer" th:replace="~{customer/storeFragments :: processedSection}">
+            </li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,13 +1,6 @@
-server:
-  port: 8081
 spring:
   application:
-    name: member
-  thymeleaf:
-    suffix: .html
-    prefix: classpath:/templates/
-    cache: false
-
+    name: infrastructure
 
   datasource:
     url: jdbc:mysql://localhost:3306/rsv?characterEncoding=UTF-8&serverTimezone=Asia/Seoul

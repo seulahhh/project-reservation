@@ -1,0 +1,99 @@
+package com.project.member.web.api;
+
+import com.project.member.model.dto.LocationDto;
+import com.project.member.model.dto.ReviewDto;
+import com.project.member.model.dto.StoreDto;
+import com.project.member.persistence.entity.Store;
+import com.project.member.persistence.repository.StoreRepository;
+import com.project.member.service.CustomerService;
+import com.project.member.service.StoreService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+@Controller
+@RequestMapping("/customer")
+@RequiredArgsConstructor
+public class CustomerApiController {
+    private final CustomerService customerService;
+    private final StoreService storeService;
+    private final StoreRepository storeRepository;
+
+    /**
+     * 매장 보여주기 (이름순, 별점순)
+     */
+    @GetMapping("/stores/search")
+    public ModelAndView searchStoresSortBy (
+            @RequestParam Map<String, Object> requestMap) {
+        ModelAndView mv = new ModelAndView();
+        List<StoreDto> resultList = new ArrayList<>();
+        if (requestMap.get("sort")
+                      .equals("rating")) {
+            resultList.addAll(storeService.showOrderByRatingAsc());
+        } else { // 기본 정렬은 이름순
+            resultList.addAll(storeService.showOrderByNameAsc());
+        }
+        mv.setViewName("customer/store");
+        mv.addObject(resultList);
+        return mv;
+    }
+
+    /**
+     * 매장 보여주기 (거리순)
+     */
+    @GetMapping("/stores/search/distance")
+    public String searchStoresSortByDistance (
+            @RequestParam Double lat,
+            @RequestParam Double lnt, Model model) {
+        List<StoreDto> resultList =
+                storeService.showOrderByDistanceAsc(LocationDto.of(lat, lnt));
+        model.addAttribute("processedData", resultList);
+
+        return "customer/storeFragments";
+    }
+
+    /**
+     * 매장 상세 정보 보여주기
+     * - 선택한 매장의
+     */
+    @GetMapping("/stores/detail/{storeId}")
+    public ModelAndView storeDetailPage (@PathVariable Long storeId) {
+        ModelAndView mv = new ModelAndView("store/store-detail");
+        Store store =
+                storeRepository.findById(storeId)
+                               .orElseThrow(() -> new RuntimeException());
+        // todo Custome Exception
+
+        mv.addObject(StoreDto.from(store));
+        return mv;
+    }
+    /**
+     * 리뷰 조회
+     * - 선택한 매장에 한해
+     */
+
+    /**
+     * 리뷰 작성하기
+     * - 선택한 매장에
+     */
+    @PostMapping("/stores/review/new")
+    public ModelAndView createReview (@ModelAttribute ReviewDto reviewDto,
+            ModelAndView mv) {
+        mv.addObject("status", "success");
+        mv.addObject("submitSuccess", "리뷰가 정상적으로 등록되었습니다");
+        mv.addObject("redirectUrl", "/customer/stores"); // 매장 조회 페이지.
+        // todo 다른 페이지로 이동 고려
+        mv.addObject("prevUrl", "/customer/stores/review");
+
+        mv.setViewName("success");
+
+        customerService.writeReview(reviewDto);
+        return mv;
+    }
+}

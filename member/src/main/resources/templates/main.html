@@ -1,0 +1,27 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hi</title>
+</head>    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+<body>
+<!--로그인 하지 않은 사용자에게만 노출-->
+<a href="/customer/login">
+    <button sec:authorize="isAnonymous()">user로그인</button>
+</a>
+<a href="/manager/login">
+    <button sec:authorize="isAnonymous()">manager로그인</button>
+</a>
+
+<a href="/register">
+    <button sec:authorize="isAnonymous()">회원가입</button>
+</a>
+
+<!--로그인한 사용자에게만 노출-->
+<button sec:authorize="isAuthenticated()">로그아웃</button>
+
+</body>
+</html>

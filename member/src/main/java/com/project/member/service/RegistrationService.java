@@ -1,9 +1,9 @@
 package com.project.member.service;
 
-import com.project.member.domain.entity.Customer;
-import com.project.member.domain.entity.Manager;
-import com.project.member.domain.repository.CustomerRepository;
-import com.project.member.domain.repository.ManagerRepository;
+import com.project.member.persistence.entity.Customer;
+import com.project.member.persistence.entity.Manager;
+import com.project.member.persistence.repository.CustomerRepository;
+import com.project.member.persistence.repository.ManagerRepository;
 import com.project.member.model.dto.form.SignupForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +18,7 @@ public class RegistrationService {
     private final ManagerRepository managerRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public void registerCustomer (SignupForm form) {
         if (customerRepository.existsByEmail(form.getEmail())) {
             throw new IllegalArgumentException("Customer already exists!");
@@ -26,11 +27,13 @@ public class RegistrationService {
                 .name(form.getName())
                 .email(form.getEmail())
                 .enabled(true)
+                .phone(form.getPhone())
                 .password(passwordEncoder.encode(form.getPassword()))
                 .build();
         customerRepository.save(customer);
     }
 
+    @Transactional
     public void registerManager (SignupForm form) {
         if (managerRepository.existsByEmail(form.getEmail())) {
             throw new IllegalArgumentException("Manager already exists!");
@@ -39,6 +42,7 @@ public class RegistrationService {
                 .name(form.getName())
                 .email(form.getEmail())
                 .enabled(true)
+                .phone(form.getPhone())
                 .password(passwordEncoder.encode(form.getPassword()))
                 .build();
         managerRepository.save(manager);
