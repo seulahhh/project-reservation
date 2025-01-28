@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-// customer가 보는 매장 위주
+
 @Service
 @RequiredArgsConstructor
 public class StoreService {
@@ -78,9 +78,22 @@ public class StoreService {
         return StoresToDtoList(resultList);
     }
 
+
+    /**
+     * 매장 상세 페이지 보여주기
+     * - 매장 리스트에서 버튼 클릭 후 진입
+     * Exception O
+     */
+    public StoreDto showStoreDetail (Long storeId) {
+        Store store = storeRepository.findById(storeId)
+                                     .orElseThrow(() -> new RuntimeException(
+                                             "해당 매장이 존재하지 않습니다"));
+                                             // todo Custome Exception
+        return StoreDto.from(store);
+    }
+
     /**
      * 거리 계산하기
-     *
      * @param locationDto 요청으로 받은 좌표
      * @return Q클래스 반환
      */

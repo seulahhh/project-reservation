@@ -1,0 +1,31 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>예약하는 페이지</title>
+</head>
+<!--id는 카멜케이스 사용 / class 는 케밥케이스 사용-->
+<body>
+<h1>예약하는 페이지</h1>
+<div class="section">
+    <form th:action="@{/customer/stores/{storeId}(storeId=${storeDto.getId()})/reservation}" method="post">
+        <div>
+            <label for="storeName">매장명: </label>
+            <input type="text" id="storeName" name="storeName" th:value="${storeDto.getName()}" disabled>
+        </div>
+        <div>
+            <label for="reservationTime">예약시간: </label>
+            <input type="datetime-local" id="reservationTime" name="reservationTime">
+        </div>
+        <div>
+            <label for="guestCount">예약 인원 수: </label>
+            <input type="number" id="guestCount" name="guestCount">
+        </div>
+        <button type="submit">예약 하기</button>
+    </form>
+</div>
+</body>
+</html>

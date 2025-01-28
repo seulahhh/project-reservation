@@ -69,13 +69,4 @@ public class HomeViewController {
         mv.addObject("name", managerName);
         return mv;
     }
-
-    /**
-     * 리뷰 작성하는 페이지 - Customer
-     */
-    @GetMapping("/customer/review")
-    public String createReviewPage() {
-        return "customer/review";
-    }
-
 }

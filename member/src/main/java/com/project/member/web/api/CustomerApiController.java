@@ -3,7 +3,6 @@ package com.project.member.web.api;
 import com.project.member.model.dto.LocationDto;
 import com.project.member.model.dto.ReviewDto;
 import com.project.member.model.dto.StoreDto;
-import com.project.member.persistence.entity.Store;
 import com.project.member.persistence.repository.StoreRepository;
 import com.project.member.service.CustomerService;
 import com.project.member.service.StoreService;
@@ -64,36 +63,22 @@ public class CustomerApiController {
      */
     @GetMapping("/stores/detail/{storeId}")
     public ModelAndView storeDetailPage (@PathVariable Long storeId) {
+        StoreDto storeDto = storeService.showStoreDetail(storeId);
         ModelAndView mv = new ModelAndView("store/store-detail");
-        Store store =
-                storeRepository.findById(storeId)
-                               .orElseThrow(() -> new RuntimeException());
-        // todo Custome Exception
-
-        mv.addObject(StoreDto.from(store));
+        mv.addObject(storeDto);
         return mv;
     }
-    /**
-     * 리뷰 조회
-     * - 선택한 매장에 한해
-     */
 
     /**
      * 리뷰 작성하기
      * - 선택한 매장에
      */
-    @PostMapping("/stores/review/new")
-    public ModelAndView createReview (@ModelAttribute ReviewDto reviewDto,
+    @PostMapping("/stores/reviews/new")
+    public ModelAndView createReview (ReviewDto reviewDto,
             ModelAndView mv) {
-        mv.addObject("status", "success");
-        mv.addObject("submitSuccess", "리뷰가 정상적으로 등록되었습니다");
-        mv.addObject("redirectUrl", "/customer/stores"); // 매장 조회 페이지.
-        // todo 다른 페이지로 이동 고려
-        mv.addObject("prevUrl", "/customer/stores/review");
+        customerService.createReview(reviewDto);
 
         mv.setViewName("success");
-
-        customerService.writeReview(reviewDto);
         return mv;
     }
 }

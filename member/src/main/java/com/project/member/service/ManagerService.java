@@ -1,9 +1,7 @@
 package com.project.member.service;
 
-import com.project.member.model.dto.ReviewDto;
 import com.project.member.model.dto.StoreDto;
 import com.project.member.model.dto.form.AddStoreForm;
-import com.project.member.model.types.Message;
 import com.project.member.persistence.entity.Manager;
 import com.project.member.persistence.entity.QManager;
 import com.project.member.persistence.entity.Review;
@@ -13,14 +11,9 @@ import com.project.member.persistence.repository.ReviewRepository;
 import com.project.member.persistence.repository.StoreRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
-import static com.project.member.model.types.Message.DELETE_COMPLETE;
 
 @Service
 @RequiredArgsConstructor
@@ -68,7 +61,8 @@ public class ManagerService {
         Store store = storeRepository.findByManager_Id(managerId)
                                      .orElseThrow(() -> new RuntimeException(
                                              "매장 정보가 없습니다"));
-
+        // todo CustomException
+        System.out.println(store.getReviews());
         return StoreDto.from(store);
     }
 

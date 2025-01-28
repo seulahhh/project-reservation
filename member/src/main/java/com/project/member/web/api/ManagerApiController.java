@@ -40,7 +40,7 @@ public class ManagerApiController {
         ModelAndView mv = new ModelAndView();
         StoreDto storeDto = managerService.getManagerStore();
         mv.addObject(storeDto);
-        mv.setViewName("manager/store");
+        mv.setViewName("store/store-detail");
         return mv;
     }
 
@@ -52,7 +52,7 @@ public class ManagerApiController {
         // todo 리뷰를 삭제할거냐는 confirm 처리
         managerService.deleteReview(reviewId);
         System.out.println("삭제완료");
-        return "manager/managerHome";
+        return "store/store-detail";
     }
 
     /**

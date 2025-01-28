@@ -1,8 +1,8 @@
 server:
-  port: 8081
+  port: 8082
 spring:
   application:
-    name: member
+    name: reservation-service
   thymeleaf:
     suffix: .html
     prefix: classpath:/templates/
@@ -29,6 +29,4 @@ logging:
   level:
     org.springframework.security: debug
 
-api:
-  base:
-    url: http://localhost:8085
+

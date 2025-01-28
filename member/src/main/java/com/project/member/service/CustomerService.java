@@ -14,6 +14,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 import java.util.Objects;
@@ -49,10 +50,11 @@ public class CustomerService {
     }
 
     /**
-     * 리뷰 저장하기 (등록하기)
+     * 리뷰 작성하기
      */
     @Transactional
-    public Message writeReview (ReviewDto dto) {
+    public Message createReview (ReviewDto dto) {
+        // 예약 내역 확인 후 리뷰 작성 가능
         Store store = storeRepository.findById(dto.getStoreId())
                                      .orElseThrow(); // todo Custom Exception
 
@@ -99,12 +101,6 @@ public class CustomerService {
     }
 
     /**
-     * 내 위치 가져오기
-     * @return
-     * LocationDto Cusotmer location
-     */
-
-    /**
      * 리뷰 가져오기 (내가 선택한 특정 단일 리뷰)
      * - 검증 포함
      */
@@ -122,19 +118,6 @@ public class CustomerService {
     }
 
     /**
-     * 리뷰 가져오기 (customer 가 작성한 모든 리뷰)
-     * (아직 사용 사항 없음)
-     */
-//    public List<Review> getMyReviews (Long customerId) {
-//        QReview review = QReview.review;
-//        return queryFactory.selectFrom(review)
-//                       w    .where(review.customer.id.eq(customerId))
-//                           .fetch();
-//    }
-
-
-
-    /**
      * 리뷰 가져오기 (내가 선택한 특정 매장의 리뷰)
      */
     public List<Review> getReviews (Long storeId) {
@@ -143,8 +126,26 @@ public class CustomerService {
                                      .where(review.store.id.eq(storeId))
                                      .fetch();
     }
+
     /**
-     * validation
+     * 예약하기
      */
 
+//    @PostMapping("/customer/login")
+//    public String loginRequest (LoginRequest loginRequest, Model model) {
+//        loginRequest.setUserRole("ROLE_CUSTOMER");
+//        System.out.println(loginRequest.getUsername());
+//        System.out.println(loginRequest.getPassword());
+//        String res = webClient.post()
+//                              .uri("/login/11")
+//                              .header("Content-Type", "application/json")
+//                              .bodyValue(loginRequest)  // 로그인 요청에 필요한 body 값
+//                              .retrieve()
+//                              .bodyToMono(String.class)  // 응답을 JWT 토큰으로 받아옴
+//                              //                                .onErrorResume(e -> Mono.just("Error"))
+//                              .block();// 에러 처리
+//        System.out.println(res);
+//        model.addAttribute("responses", res);
+//        return "after-login-test";
+//    }
 }
