@@ -1,18 +1,20 @@
 spring:
   application:
     name: infrastructure
-
-  datasource:
-    url: jdbc:mysql://localhost:3306/rsv?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: reservation
-    password: 1
-
-  jpa:
-    generate-ddl: true
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+  kafka:
+    #producer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    #consumer
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringSerializer
+      value-deserializer: org.apache.kafka.common.serialization.StringSerializer
+    bootstrap-servers: localhost:9092
 logging:
   level:
-    org.springframework.security: debug
+    com.project.infrastructure: DEBUG
+    org:
+      apache.kafka: INFO
+      springframework.kafka: INFO

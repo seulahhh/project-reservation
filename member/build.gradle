@@ -16,6 +16,8 @@ java {
     }
 }
 dependencies {
+    implementation project(":infrastructure")
+
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
@@ -60,7 +62,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64'
 
-    implementation group: 'de.taimos', name: 'gpsd4java', version: '1.6'
+    // kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
+//    implementation group: 'de.taimos', name: 'gpsd4java', version: '1.6'
 }
 
 // QueryDSL 사용을 위해 빌드 시 폴더와 Q클래스 생성
