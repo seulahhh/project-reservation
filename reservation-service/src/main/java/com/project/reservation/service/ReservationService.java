@@ -58,7 +58,7 @@ public class ReservationService {
     }
 
     /**
-     * 요청받은 예약정보 넘기기(Customer에게)
+     * 특정 customer의 에약 리스트 구하기
      */
     public List<ReservationDto> getCustomerReservations (Long customerId) {
         return reservationRepository.findByCustomerId(customerId)
@@ -68,6 +68,18 @@ public class ReservationService {
 
     }
 
+    /**
+     * 특정 상점(amanger)의 예약 리스트 구하기
+     */
+    public List<ReservationDto> getManagerReservations (Long storeId) {
+
+        return reservationRepository.findByStoreId(storeId)
+                                    .stream()
+                                    .map(reservationMapper::toReservationDto)
+                                    .toList();
+
+
+    }
     /**
      * arrival Status 업데이트
      */

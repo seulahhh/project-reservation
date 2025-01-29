@@ -14,30 +14,37 @@
             font-family: "Nanum Gothic";
             border-collapse: collapse;
         }
+
         ol, ul, li {
             list-style: none;
         }
+
         a {
             text-decoration: none;
             color: inherit;
         }
+
         button {
             text-decoration: none;
         }
+
         .flex-box {
             display: flex;
 
         }
-        .flex-box > li{
+
+        .flex-box > li {
             flex: 1;
             text-align: center;
             justify-content: space-between;
             align-content: center;
             height: 3rem;
         }
+
         .list-container > li:nth-child(2n) {
             background-color: #fafafa;
         }
+
         .custom-button {
             border: 1px solid gray;
             padding: 4px 10px;
@@ -47,17 +54,19 @@
             position: relative;
             left: -1px;
             top: -1px;
-            transition-duration:  .2s;
+            transition-duration: .2s;
             cursor: pointer;
             font-size: .9rem;
         }
+
         .custom-button:hover {
             box-shadow: none;
             left: 0;
             top: 0;
-            transition-duration:  .2s;
+            transition-duration: .2s;
             background-color: #ebf3ff;
         }
+
         .button-container {
             display: flex;
             min-width: 400px;
@@ -65,14 +74,17 @@
             justify-content: space-between;
             align-content: center;
         }
+
         li > .custom-button {
             display: block;
             width: fit-content;
             margin: 0 auto;
         }
+
         .display-container {
             max-width: 80%;
         }
+
         .section {
             display: flex;
             flex-direction: column;
@@ -82,6 +94,7 @@
             margin: 0 auto;
             padding: 20px;
         }
+
         .list-head {
             background-color: rgba(159, 159, 159, 0.16);
             border: 1px solid #b6b6b6;
@@ -90,24 +103,82 @@
             border-top-right-radius: 10px;
 
         }
+
         .list-container {
             border: 1px solid #b6b6b6;
             border-bottom-left-radius: 10px;
             border-bottom-right-radius: 10px;
             overflow: hidden;
         }
+
         .list-header {
         }
     </style>
     <script src="/js/geo.js"></script>
+    <script>
+        window.onload = async function () {
+            try{
+            // 1. 위치 정보를 받아오기
+                const position = await getCurrentLocation();
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                console.log("위도:", latitude);
+                console.log("경도:", longitude);
+
+            // 2. 위치 정보를 바탕으로 다른 API 호출
+            const apiUrl = `/customer/stores/search/distance?lat=${position.coords.latitude}&lnt=${position.coords.longitude}`;
+            const data = await fetchData(apiUrl);
+            const innerHtml = await data.text();
+            document.getElementById('dynamicContainer').innerHTML = innerHtml;
+
+            // 3. 받아온 데이터 처리
+            console.log("API에서 받은 데이터:", data);
+        } catch (error) {
+            console.error("오류 발생:", error);
+        }
+}
+        function getCurrentLocation() {
+            return new Promise((resolve, reject) => {
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition(resolve, reject);
+                } else {
+                    reject("Geolocation을 지원하지 않는 브라우저입니다.");
+                }
+            });
+        }
+
+        async function fetchData(url) {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error("API 호출 실패");
+            }
+            return response;
+        }
+
+        function changeElement() {
+            const listContainer =document.getElementById("listContainer");
+            if (listContainer !== null) {
+                listContainer.remove();
+            }
+            const dynamicContainer = document.getElementById("dynamicContainer");
+            dynamicContainer.style.display = 'block';
+        }
+    </script>
 </head>
-<!--id는 카멜케이스 사용 / class 는 케밥케이스 사용-->
 <body>
 <div class="section">
-    <div  class="button-container">
-        <a class="custom-button" th:href="@{/customer/stores/search?sort=name}">이름순으로 조회</a>
-        <a class="custom-button" th:href="@{/customer/stores/search?sort=rating}">별점순으로 조회</a>
-        <a class="custom-button" onclick="getLocation()">거리순으로 조회</a>
+    <div class="button-container">
+        <a class="custom-button" th:href="@{/customer/stores/search?sort=name}">이름순으로
+            조회</a>
+        <a class="custom-button"
+           th:href="@{/customer/stores/search?sort=rating}">별점순으로 조회</a>
+        <a class="custom-button" onclick="getLocation()" th:a>거리순으로 조회</a>
+        <form th:action="@{/stores/search/distance}" method="get">
+            <input type="hidden" id="lat" name="lat">
+            <input type="hidden" id="lnt" name="lnt">
+            <button type="submit">테스트버튼</button>
+        </form>
+        <a class="custom-button" onclick="" id="ButtonCoords">테스트버튼</a>
     </div>
     <div id="resultBox" class="display-container">
         <ul class="list-header">
@@ -127,18 +198,20 @@
                     <li th:text="${store.getRating()}"></li>
                     <li th:text="${store.getDistance()}"></li>
                     <li>
-                        <a class="detail custom-button" th:href="@{/customer/stores/detail/{id}(id=${store.getId()})}">DETAILS</a>
+                        <a class="detail custom-button"
+                           th:href="@{/customer/stores/detail/{id}(id=${store.getId()})}">DETAILS</a>
                     </li>
                 </ul>
             </li>
         </ul>
-        <ul id="dynamicContainer" class="list-container" style="display: none">
+        <ul id="dynamicContainer" class="list-container" style="display: block">
             <li id="loading" style="display: block">
                 <ul class="flex-box">
                     <li>... 위치 정보 불러오는 중 ...</li>
                 </ul>
             </li>
-            <li th:fragment="processedSection" id="resultContainer" th:replace="~{customer/storeFragments :: processedSection}">
+            <li th:fragment="processedSection" id="resultContainer"
+                th:replace="~{customer/storeFragments :: processedSection}">
             </li>
         </ul>
     </div>
