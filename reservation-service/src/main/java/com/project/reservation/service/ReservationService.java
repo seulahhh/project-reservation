@@ -1,7 +1,9 @@
 package com.project.reservation.service;
 
+import com.project.reservation.exception.CustomException;
 import com.project.reservation.model.dto.CreateReservationForm;
 import com.project.reservation.model.dto.ReservationDto;
+import com.project.reservation.model.dto.form.ArrivalCheckForm;
 import com.project.reservation.model.types.ReservationStatus;
 import com.project.reservation.persistence.entity.Reservation;
 import com.project.reservation.persistence.repository.ReservationRepository;
@@ -9,6 +11,11 @@ import com.project.reservation.util.ReservationMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+import static com.project.reservation.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -30,27 +37,31 @@ public class ReservationService {
     /**
      * Manager에게 예약 승인 요청 알림 보내기
      */
-    public void notifyManagerOfRequest() {
+    public void notifyManagerOfRequest () {
 
     }
+
     /**
      * Manager의 승인 상태 변경에 따라
      * 예약상태 업데이트하기
      */
-    public boolean updateConfirmStatus(Long reservationId, ReservationStatus status) {
+    public boolean updateConfirmStatus (Long reservationId,
+            ReservationStatus status) {
         Reservation reservation = getReservation(reservationId);
-        if(reservation.getReservationStatus() == status) {
+        if (reservation.getReservationStatus() == status) {
             throw new RuntimeException("이미 처리된 요청입니다"); // todo
         }
         reservation.setReservationStatus(status);
         return true;
     }
+
     /**
      * 요청받은 예약정보 넘기기(Customer에게)
      */
     public ReservationDto viewReservations (Long customerId) {
-        Reservation reservation = reservationRepository.findByCustomerId(customerId)
-                                                       .orElseThrow(() -> new RuntimeException());
+        Reservation reservation =
+                reservationRepository.findByCustomerId(customerId)
+                                     .orElseThrow(() -> new RuntimeException());
         return reservationMapper.toReservationDto(reservation);
     }
 
@@ -58,13 +69,13 @@ public class ReservationService {
      * ReservationStatus 업데이트
      */
     @Transactional
-    public boolean updateArrivalStatus (Long reservationId) {
-        if (getReservation(reservationId).isHasArrived()) {
-            throw new RuntimeException("이미 도착 확인이 되었습니다");
-        }
-        //
+    public boolean updateArrivalStatus (ArrivalCheckForm form) {
+        validateArrivalCheck(form);
+        Reservation reservation = getReservation(form.getReservationId());
+        reservation.setHasArrived(true);
+        // persistence --> auto saving
+        return true;
     }
-
 
 
     // ------------------------------------------ 비즈니스로직 끝
@@ -85,14 +96,27 @@ public class ReservationService {
     // 예약 id로 예약 Entity 찾기
     public Reservation getReservation (Long id) {
         return reservationRepository.findById(id)
-                                                       .orElseThrow(() -> new RuntimeException());
+                                    .orElseThrow(() -> new RuntimeException());
     }
 
-    // 받은 storeId로 예약 store 찾기
-//    public StoreDto getStoreDtoByStoreId (Long storeId) {
-//        Store store = storeRepository.findById(storeId)
-//                              .orElseThrow(() -> new RuntimeException("해당 매장이 존재하지 " + "않습니다" + ".")); // todo
-//        return StoreDto.from(store);
-//    }
-    // 맞는 예약 내역 조회 (DB)
+    // 매장 도착 확인 시 유효성 검사
+    public void validateArrivalCheck (ArrivalCheckForm form) {
+        Reservation reservation = getReservation(form.getReservationId());
+        if (!Objects.equals(reservation.getCustomerId(),
+                            form.getCustomerId()) ||
+                !Objects.equals(reservation.getStoreId(), form.getStoreId())) {
+            throw new CustomException(RESERVATION_NOT_FOUND);
+        }
+        if (reservation.isHasArrived()) {
+            throw new CustomException(ARRIVAL_ALREADY_CHECKED);
+        }
+        if (reservation.getReservationStatus() != ReservationStatus.CONFIRMED) {
+            throw new CustomException(INVALID_RESERVATION_STATUS);
+        }
+        if (reservation.getReservationTime()
+                       .minusMinutes(10)
+                       .isAfter(LocalDateTime.now())) {
+            throw new CustomException(ARRIVAL_TIME_EXCEEDED);
+        }
+    }
 }
