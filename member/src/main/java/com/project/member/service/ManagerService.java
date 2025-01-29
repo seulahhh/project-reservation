@@ -15,6 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 
@@ -89,9 +91,12 @@ public class ManagerService {
         Review review = reviewRepository.findById(reviewId)
                                         .orElseThrow(() -> new RuntimeException("리뷰가 존재하지 않습니다.")); // todo exception처리 수정필요
         Long loginId = getManagerId();
-        if (review.getStore().getManager().getId() != loginId) {
+        if (review.getStore()
+                  .getManager()
+                  .getId() != loginId) {
             // 권한 없으면
-            throw new RuntimeException("리뷰를 삭제할 수 있는 권한이 없습니다"); // todo customExcpeton
+            throw new RuntimeException("리뷰를 삭제할 수 있는 권한이 없습니다"); // todo
+            // customExcpeton
         }
         reviewRepository.deleteById(review.getId());
         // todo 리뷰삭제 시 store의 rate update
@@ -105,6 +110,14 @@ public class ManagerService {
     public Manager getManagerFromId (Long managerId) {
         return managerRepository.findById(managerId)
                                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다")); // todo customeException
+    }
+
+    public Long getManagerIdFromStoreId (Long storeId) {
+        return queryFactory.select(qManager.id)
+                                       .from(qManager)
+                                       .where(qManager.store.id.eq(storeId))
+                                       .fetchFirst();
+
     }
 
     /**

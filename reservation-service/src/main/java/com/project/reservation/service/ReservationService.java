@@ -1,10 +1,10 @@
 package com.project.reservation.service;
 
+import com.project.global.dto.ArrivalCheckForm;
+import com.project.global.dto.ReservationDto;
 import com.project.reservation.exception.CustomException;
-import com.project.reservation.model.dto.CreateReservationForm;
-import com.project.reservation.model.dto.ReservationDto;
-import com.project.reservation.model.dto.form.ArrivalCheckForm;
-import com.project.reservation.model.types.ReservationStatus;
+import com.project.global.dto.form.CreateReservationForm;
+import com.project.global.dto.ReservationStatus;
 import com.project.reservation.persistence.entity.Reservation;
 import com.project.reservation.persistence.repository.ReservationRepository;
 import com.project.reservation.util.ReservationMapper;
@@ -12,9 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
+import static com.project.global.dto.ReservationStatus.CONFIRMED;
 import static com.project.reservation.exception.ErrorCode.*;
 
 @Service
@@ -37,7 +38,8 @@ public class ReservationService {
     /**
      * Manager에게 예약 승인 요청 알림 보내기
      */
-    public void notifyManagerOfRequest () {
+    public void notifyManagerOfRequest (Long managerId,
+            ReservationDto reservationDto) {
 
     }
 
@@ -58,25 +60,30 @@ public class ReservationService {
     /**
      * 요청받은 예약정보 넘기기(Customer에게)
      */
-    public ReservationDto viewReservations (Long customerId) {
-        Reservation reservation =
-                reservationRepository.findByCustomerId(customerId)
-                                     .orElseThrow(() -> new RuntimeException());
-        return reservationMapper.toReservationDto(reservation);
+    public List<ReservationDto> getCustomerReservations (Long customerId) {
+        return reservationRepository.findByCustomerId(customerId)
+                                    .stream()
+                                    .map(reservationMapper::toReservationDto)
+                                    .toList();
+
     }
 
     /**
-     * ReservationStatus 업데이트
+     * arrival Status 업데이트
      */
     @Transactional
-    public boolean updateArrivalStatus (ArrivalCheckForm form) {
+    public void updateArrivalStatus (ArrivalCheckForm form) {
         validateArrivalCheck(form);
         Reservation reservation = getReservation(form.getReservationId());
         reservation.setHasArrived(true);
         // persistence --> auto saving
-        return true;
     }
 
+    @Transactional
+    public void updateReservationStatus (Long reservationId,
+            ReservationStatus status) {
+        getReservation(reservationId).setReservationStatus(status);
+    }
 
     // ------------------------------------------ 비즈니스로직 끝
 
@@ -96,7 +103,7 @@ public class ReservationService {
     // 예약 id로 예약 Entity 찾기
     public Reservation getReservation (Long id) {
         return reservationRepository.findById(id)
-                                    .orElseThrow(() -> new RuntimeException());
+                                    .orElseThrow(() -> new CustomException(RESERVATION_NOT_FOUND));
     }
 
     // 매장 도착 확인 시 유효성 검사
@@ -110,12 +117,12 @@ public class ReservationService {
         if (reservation.isHasArrived()) {
             throw new CustomException(ARRIVAL_ALREADY_CHECKED);
         }
-        if (reservation.getReservationStatus() != ReservationStatus.CONFIRMED) {
+        if (reservation.getReservationStatus() != CONFIRMED) {
             throw new CustomException(INVALID_RESERVATION_STATUS);
         }
         if (reservation.getReservationTime()
-                       .minusMinutes(10)
-                       .isAfter(LocalDateTime.now())) {
+                       .isBefore(form.getCheckAt()
+                                     .plusMinutes(10))) {
             throw new CustomException(ARRIVAL_TIME_EXCEEDED);
         }
     }

@@ -1,4 +1,4 @@
-package com.project.member.model.dto;
+package com.project.infrastructure.kafka.dto;
 
 import lombok.*;
 
@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
-@ToString
 public class ReservationDto {
     private Long id;
     private LocalDateTime reservationTime;
@@ -20,3 +19,4 @@ public class ReservationDto {
     private boolean hasArrived;
     private String reservationStatus;
 }
+

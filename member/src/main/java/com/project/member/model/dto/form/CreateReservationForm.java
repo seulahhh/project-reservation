@@ -15,4 +15,5 @@ public class CreateReservationForm {
     private Long customerId;
     private Long storeId;
     private Long guestCount;
+    private Long managerId;
 }

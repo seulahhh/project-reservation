@@ -1,4 +1,4 @@
-package com.project.reservation.model.dto.form;
+package com.project.global.dto;
 
 import lombok.*;
 

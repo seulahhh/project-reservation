@@ -139,20 +139,19 @@ public class CustomerService {
         Long customerId = form.getCustomerId();
         System.out.println(form.toString());
         ReservationDto res = webClient.post()
-                                      .uri("/api/reservation/new")
+                                      .uri("/api/reservation")
                                       .header("Content-Type", "application/json")
                                       .bodyValue(form)
                                       .retrieve()
                                       .bodyToMono(ReservationDto.class)
                                       .block();
-        System.out.println(res.toString());
         return res;
     }
 
     /**
      * 현재 로그인한 customer의 정보로 customerId 가져오기
      */
-    public Long getCustomerId() {
+    public Long getCurrentCustomerId () {
         String email = SecurityContextHolder.getContext()
                                             .getAuthentication()
                                             .getName();

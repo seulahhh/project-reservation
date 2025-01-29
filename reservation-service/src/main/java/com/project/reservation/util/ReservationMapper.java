@@ -1,7 +1,7 @@
 package com.project.reservation.util;
 
-import com.project.reservation.model.dto.CreateReservationForm;
-import com.project.reservation.model.dto.ReservationDto;
+import com.project.global.dto.ReservationDto;
+import com.project.global.dto.form.CreateReservationForm;
 import com.project.reservation.persistence.entity.Reservation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

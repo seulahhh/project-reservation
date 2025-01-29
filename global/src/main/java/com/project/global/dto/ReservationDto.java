@@ -1,16 +1,15 @@
-package com.project.reservation.model.dto;
+package com.project.global.dto;
 
-import com.project.reservation.model.types.ReservationStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
-
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
+@ToString
 public class ReservationDto {
     private Long id;
     private LocalDateTime reservationTime;

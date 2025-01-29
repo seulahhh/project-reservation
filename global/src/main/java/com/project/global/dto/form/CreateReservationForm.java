@@ -1,4 +1,4 @@
-package com.project.reservation.model.dto;
+package com.project.global.dto.form;
 
 import lombok.*;
 
@@ -15,4 +15,5 @@ public class CreateReservationForm {
     private Long customerId;
     private Long storeId;
     private Long guestCount;
+    private Long managerId;
 }

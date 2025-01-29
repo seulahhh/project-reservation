@@ -7,6 +7,7 @@ import com.project.member.model.dto.StoreDto;
 import com.project.member.model.dto.form.CreateReservationForm;
 import com.project.member.persistence.repository.StoreRepository;
 import com.project.member.service.CustomerService;
+import com.project.member.service.ManagerService;
 import com.project.member.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -25,6 +26,7 @@ public class CustomerApiController {
     private final CustomerService customerService;
     private final StoreService storeService;
     private final StoreRepository storeRepository;
+    private final ManagerService managerService;
 
     /**
      * 매장 보여주기 (이름순, 별점순)
@@ -85,10 +87,10 @@ public class CustomerApiController {
     /**
      * 예약하기
      */
-    @PostMapping("/reservation/new/{storeId}")
+    @PostMapping("/reservation/{storeId}")
     public String createReservation (@PathVariable Long storeId, @ModelAttribute CreateReservationForm form, Model model) {
-        Long customerId = customerService.getCustomerId();
-        form.setCustomerId(customerId);
+        form.setCustomerId(customerService.getCurrentCustomerId());
+        form.setManagerId(managerService.getManagerIdFromStoreId(storeId));
         form.setStoreId(storeId);
 
         ReservationDto reservationDto = customerService.createReservation(form);

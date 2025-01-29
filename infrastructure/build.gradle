@@ -26,10 +26,11 @@ dependencies {
     //lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-
     //kafka
     implementation 'org.springframework.kafka:spring-kafka'
 
+    //localdatetime -> string mapping
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.5'
     //test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.kafka:spring-kafka-test'

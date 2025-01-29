@@ -1,12 +1,12 @@
 package com.project.reservation.persistence.entity;
 
-import com.project.reservation.model.types.ReservationStatus;
+import com.project.global.dto.ReservationStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-import static com.project.reservation.model.types.ReservationStatus.PENDING_APPROVAL;
+import static com.project.global.dto.ReservationStatus.PENDING_APPROVAL;
 
 @Entity
 @Getter

@@ -1,4 +1,4 @@
-package com.project.reservation.model.types;
+package com.project.global.dto;
 
 import lombok.RequiredArgsConstructor;
 
