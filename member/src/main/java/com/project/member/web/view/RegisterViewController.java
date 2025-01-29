@@ -15,5 +15,4 @@ public class RegisterViewController {
 
         return "register";
     }
-
 }

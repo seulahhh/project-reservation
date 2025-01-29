@@ -1,7 +1,9 @@
 package com.project.member.service;
 
 import com.project.member.model.dto.LoginForm;
+import com.project.member.model.dto.ReservationDto;
 import com.project.member.model.dto.ReviewDto;
+import com.project.member.model.dto.form.CreateReservationForm;
 import com.project.member.model.types.Message;
 import com.project.member.persistence.entity.Customer;
 import com.project.member.persistence.entity.QReview;
@@ -12,9 +14,10 @@ import com.project.member.persistence.repository.ReviewRepository;
 import com.project.member.persistence.repository.StoreRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,6 +35,7 @@ public class CustomerService {
     private final StoreRepository storeRepository;
     private final ReviewRepository reviewRepository;
     private final StoreService storeService;
+    private final WebClient webClient;
     QReview qReview = QReview.review;
     // repository에서 customer 찾기
 
@@ -130,22 +134,30 @@ public class CustomerService {
     /**
      * 예약하기
      */
+    public ReservationDto createReservation(CreateReservationForm form) {
+        Long storeId = form.getStoreId();
+        Long customerId = form.getCustomerId();
+        System.out.println(form.toString());
+        ReservationDto res = webClient.post()
+                                      .uri("/api/reservation/new")
+                                      .header("Content-Type", "application/json")
+                                      .bodyValue(form)
+                                      .retrieve()
+                                      .bodyToMono(ReservationDto.class)
+                                      .block();
+        System.out.println(res.toString());
+        return res;
+    }
 
-//    @PostMapping("/customer/login")
-//    public String loginRequest (LoginRequest loginRequest, Model model) {
-//        loginRequest.setUserRole("ROLE_CUSTOMER");
-//        System.out.println(loginRequest.getUsername());
-//        System.out.println(loginRequest.getPassword());
-//        String res = webClient.post()
-//                              .uri("/login/11")
-//                              .header("Content-Type", "application/json")
-//                              .bodyValue(loginRequest)  // 로그인 요청에 필요한 body 값
-//                              .retrieve()
-//                              .bodyToMono(String.class)  // 응답을 JWT 토큰으로 받아옴
-//                              //                                .onErrorResume(e -> Mono.just("Error"))
-//                              .block();// 에러 처리
-//        System.out.println(res);
-//        model.addAttribute("responses", res);
-//        return "after-login-test";
-//    }
+    /**
+     * 현재 로그인한 customer의 정보로 customerId 가져오기
+     */
+    public Long getCustomerId() {
+        String email = SecurityContextHolder.getContext()
+                                            .getAuthentication()
+                                            .getName();
+        Customer customer = customerRepository.findByEmail(email)
+                                              .orElseThrow(() -> new RuntimeException(""));// todo
+        return customer.getId();
+    }
 }

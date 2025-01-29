@@ -11,6 +11,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @RequiredArgsConstructor
@@ -24,7 +27,7 @@ public class SecurityConfig {
             HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .securityMatcher("/customer/**") // 이 필터체인은 /customer/login
+                .securityMatcher("/customer/**", "/reservation/**") // 이 필터체인은 /customer/login
                 // 에만 적용됨
                 .authorizeHttpRequests(auth ->
                                                auth.requestMatchers(
@@ -104,6 +107,18 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager (
             AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.addAllowedOrigin("http://localhost:8080");
+        corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.addAllowedMethod("*");
+        corsConfiguration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+        return source;
     }
 
 }

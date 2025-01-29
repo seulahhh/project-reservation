@@ -1,11 +1,8 @@
 package com.project.reservation.service;
 
-import com.project.member.model.dto.StoreDto;
-import com.project.member.persistence.entity.Store;
-import com.project.member.persistence.repository.CustomerRepository;
-import com.project.member.persistence.repository.StoreRepository;
 import com.project.reservation.model.dto.CreateReservationForm;
 import com.project.reservation.model.dto.ReservationDto;
+import com.project.reservation.model.types.ReservationStatus;
 import com.project.reservation.persistence.entity.Reservation;
 import com.project.reservation.persistence.repository.ReservationRepository;
 import com.project.reservation.util.ReservationMapper;
@@ -17,12 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ReservationService {
 
-//    private final CustomerRepository customerRepository;
     private final ReservationRepository reservationRepository;
-//    private final StoreRepository storeRepository;
     private final ReservationMapper reservationMapper;
 
-    // 예약 생성하기
+    /**
+     * 요청받은 예약을 DB 저장
+     */
     @Transactional
     public ReservationDto createReservation (CreateReservationForm form) {
         getReservationAvailability(); // 예외처리 여기서 끝냄
@@ -30,18 +27,45 @@ public class ReservationService {
         return reservationMapper.toReservationDto(reservationRepository.save(reservation));
     }
 
-    // 예약 내역 보기(상태 포함)
-    public void viewReservations () {
-        // todo 수행 완료한 예약은 리뷰를 작성할 수 있게 하기
+    /**
+     * Manager에게 예약 승인 요청 알림 보내기
+     */
+    public void notifyManagerOfRequest() {
 
     }
-
-    // 키오스크에서 도착 여부 확인 하기
-    public void checkInAtKiosk () {
-        // customer id를 통해 해당 매장에 예약한 내역 찾기
-        // 도착 확인 버튼 누르기
-        // reservation의 상태 바꾸기(arrival상태)
+    /**
+     * Manager의 승인 상태 변경에 따라
+     * 예약상태 업데이트하기
+     */
+    public boolean updateConfirmStatus(Long reservationId, ReservationStatus status) {
+        Reservation reservation = getReservation(reservationId);
+        if(reservation.getReservationStatus() == status) {
+            throw new RuntimeException("이미 처리된 요청입니다"); // todo
+        }
+        reservation.setReservationStatus(status);
+        return true;
     }
+    /**
+     * 요청받은 예약정보 넘기기(Customer에게)
+     */
+    public ReservationDto viewReservations (Long customerId) {
+        Reservation reservation = reservationRepository.findByCustomerId(customerId)
+                                                       .orElseThrow(() -> new RuntimeException());
+        return reservationMapper.toReservationDto(reservation);
+    }
+
+    /**
+     * ReservationStatus 업데이트
+     */
+    @Transactional
+    public boolean updateArrivalStatus (Long reservationId) {
+        if (getReservation(reservationId).isHasArrived()) {
+            throw new RuntimeException("이미 도착 확인이 되었습니다");
+        }
+        //
+    }
+
+
 
     // ------------------------------------------ 비즈니스로직 끝
 
@@ -56,6 +80,12 @@ public class ReservationService {
         // ↪︎ StoreAvailability 테이블의 하루 예약 가능 수와, Reservation테이블에서 해당 매장의 해당
         // 날짜를 연산해서 자리수가 남아있으면 예약 가능
         return true;
+    }
+
+    // 예약 id로 예약 Entity 찾기
+    public Reservation getReservation (Long id) {
+        return reservationRepository.findById(id)
+                                                       .orElseThrow(() -> new RuntimeException());
     }
 
     // 받은 storeId로 예약 store 찾기

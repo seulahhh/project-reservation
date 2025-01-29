@@ -11,10 +11,10 @@
 <body>
 <h1>예약하는 페이지</h1>
 <div class="section">
-    <form th:action="@{/customer/stores/{storeId}(storeId=${storeDto.getId()})/reservation}" method="post">
+    <form th:action="@{/customer/reservation/new}" method="post">
         <div>
             <label for="storeName">매장명: </label>
-            <input type="text" id="storeName" name="storeName" th:value="${storeDto.getName()}" disabled>
+            <input type="text" id="storeName" name="storeName" th:value="${}" disabled>
         </div>
         <div>
             <label for="reservationTime">예약시간: </label>

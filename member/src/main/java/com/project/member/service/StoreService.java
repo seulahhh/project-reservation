@@ -131,4 +131,13 @@ public class StoreService {
         store.setRating(storeRating);
         System.out.println("별점 업데이트 완료");
     }
+
+    /**
+     * 매장 id로 매장 찾고 매장 이름 반환
+     */
+    public String getStoreNameById (Long storeId) {
+        Store store = storeRepository.findById(storeId)
+                                     .orElseThrow(() -> new RuntimeException());// todo
+        return store.getName();
+    }
 }

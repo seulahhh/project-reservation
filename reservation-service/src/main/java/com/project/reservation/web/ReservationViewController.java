@@ -1,6 +1,5 @@
 package com.project.reservation.web;
 
-import com.project.member.model.dto.StoreDto;
 import com.project.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

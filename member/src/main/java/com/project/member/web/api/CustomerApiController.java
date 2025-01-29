@@ -1,8 +1,10 @@
 package com.project.member.web.api;
 
 import com.project.member.model.dto.LocationDto;
+import com.project.member.model.dto.ReservationDto;
 import com.project.member.model.dto.ReviewDto;
 import com.project.member.model.dto.StoreDto;
+import com.project.member.model.dto.form.CreateReservationForm;
 import com.project.member.persistence.repository.StoreRepository;
 import com.project.member.service.CustomerService;
 import com.project.member.service.StoreService;
@@ -47,8 +49,7 @@ public class CustomerApiController {
      * 매장 보여주기 (거리순)
      */
     @GetMapping("/stores/search/distance")
-    public String searchStoresSortByDistance (
-            @RequestParam Double lat,
+    public String searchStoresSortByDistance (@RequestParam Double lat,
             @RequestParam Double lnt, Model model) {
         List<StoreDto> resultList =
                 storeService.showOrderByDistanceAsc(LocationDto.of(lat, lnt));
@@ -74,11 +75,26 @@ public class CustomerApiController {
      * - 선택한 매장에
      */
     @PostMapping("/stores/reviews/new")
-    public ModelAndView createReview (ReviewDto reviewDto,
-            ModelAndView mv) {
+    public ModelAndView createReview (ReviewDto reviewDto, ModelAndView mv) {
         customerService.createReview(reviewDto);
 
         mv.setViewName("success");
         return mv;
+    }
+
+    /**
+     * 예약하기
+     */
+    @PostMapping("/reservation/new/{storeId}")
+    public String createReservation (@PathVariable Long storeId, @ModelAttribute CreateReservationForm form, Model model) {
+        Long customerId = customerService.getCustomerId();
+        form.setCustomerId(customerId);
+        form.setStoreId(storeId);
+
+        ReservationDto reservationDto = customerService.createReservation(form);
+
+        model.addAttribute(reservationDto);
+
+        return "customer/reservation-complete";
     }
 }
