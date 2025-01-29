@@ -28,5 +28,21 @@ spring:
 logging:
   level:
     org.springframework.security: debug
-
+# swagger
+springdoc:
+#  packages-to-scan: com.project.reservation-service
+  cache:
+    disabled: true
+  api-docs:
+    path: /api-docs/json
+    groups:
+      enabled: true
+  swagger-ui:
+    # Swagger UI 사용여부 : 접근 경로 => <http://localhost:8082/swagger-ui/index.html>
+    enabled: true
+    path: /test-ui.html
+    # path: /demo-ui.html # Swagger UI 추가 접근 경로 => <http://localhost:8080/demo-ui.html>
+    tags-sorter: alpha
+    # alpha: 알파벳 순 태그 정렬, method: HTTP Method 순 정렬
+    operations-sorter: alpha
 
