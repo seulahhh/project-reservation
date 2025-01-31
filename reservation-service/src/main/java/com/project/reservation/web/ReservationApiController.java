@@ -1,10 +1,13 @@
 package com.project.reservation.web;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.project.global.dto.ArrivalCheckForm;
 import com.project.global.dto.ReservationDto;
 import com.project.global.dto.ReservationStatus;
 import com.project.global.dto.form.CreateReservationForm;
-import com.project.reservation.alarm.SseEmitterService;
+import com.project.infrastructure.kafka.KafkaProducer;
 import com.project.reservation.service.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpSession;
@@ -18,13 +21,12 @@ import java.util.List;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class ReservationApiController {
-    private final SseEmitterService sseEmitterService;
     private final ReservationService reservationService;
+    private final KafkaProducer kafkaProducer;
 
     @Operation(
             summary = "customer가 새로운 예약을 신청하는 API",
-            description = "customer가 매장에 새로운 예약을 시청하면 DB에 기본상태로 저장 후 " +
-                    "해당 매장의 매니저가 접속해 있을 시 실시간으로 알람이 전송되게 합니다."
+            description = "customer가 매장에 새로운 예약을 시청하면 DB에 기본상태로 저장합니다"
     )
     @PostMapping("/reservation")
     public ResponseEntity<ReservationDto> createReservation (
@@ -32,8 +34,19 @@ public class ReservationApiController {
 
         ReservationDto reservationDto =
                 reservationService.createReservation(form);
-        boolean ok = sseEmitterService.sendMessages(form.getManagerId(),
-                                                    reservationDto);
+
+//        boolean ok = sseEmitterService.sendMessages(form.getManagerId(),
+//                                                    reservationDto);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        try {
+            String msg = objectMapper.writeValueAsString(reservationDto);
+            kafkaProducer.sendMessage("toManager", msg, form.getManagerId());
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
 
         return ResponseEntity.ok(reservationDto);
     }

@@ -5,9 +5,16 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script defer src="/js/notification.js"></script>
     <title>Manager Home</title>
 </head>
 <body>
+    <div id="notification" th:fragment="dynamic"
+    th:replace="~{notification-fragment :: notification-message}" style="display: none">
+
+    </div>
+    <div id="info" th:attr="data-manager-id=${managerId}"></div>
+
     <p th:text="${name}"></p>
     <p>님 안녕하세요!</p>
     <a href="/manager/store">매장 보기</a>

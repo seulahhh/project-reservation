@@ -1,4 +1,4 @@
-package com.project.member.web;
+package com.project.reservation.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,15 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 //@RestController
 //@RequiredArgsConstructor
-//public class KafkaTestController {
+//public class KafkaMessageController {
 //    private final KafkaProducer kafkaProducer;
 //
-//    @GetMapping("/customer/kafka/test")
+//    @GetMapping("/cafka/kafka/test")
 //    public void kafkaTest() throws JsonProcessingException {
 //        ObjectMapper objectMapper = new ObjectMapper();
 //        String s = objectMapper.writeValueAsString(ReservationDto.builder()
-//                                                           .id(2L)
-//                                                           .customerId(2L)
 //                                                           .build());
 //        kafkaProducer.sendMessage("toManager", s);
 //    }

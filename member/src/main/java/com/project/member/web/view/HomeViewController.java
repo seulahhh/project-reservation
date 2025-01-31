@@ -1,6 +1,7 @@
 package com.project.member.web.view;
 
 import com.project.member.model.dto.LoginForm;
+import com.project.member.service.ManagerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContext;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequiredArgsConstructor
 @Slf4j
 public class HomeViewController {
+    private final ManagerService managerService;
     /**
      * 메인페이지
      */
@@ -71,8 +73,11 @@ public class HomeViewController {
     public ModelAndView managerHome() {
         ModelAndView mv = new ModelAndView("manager/managerHome");
         SecurityContext context = SecurityContextHolder.getContext();
+        Long managerId = managerService.getManagerId();
         String managerName = context.getAuthentication().getName();
+        System.out.println("managerId" + managerId);
         mv.addObject("name", managerName);
+        mv.addObject("managerId", managerId);
         return mv;
     }
 }

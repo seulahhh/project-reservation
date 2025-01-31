@@ -26,6 +26,8 @@ spring:
     show-sql: true
 
   mvc:
+    async:
+      request-timeout: 60000 # sse time-out 60초
     hidden method:
       filter:
         enabled: true # hidden 타입의 input 태그 속성을 필터링해주어 각 요청의 HTTP 메서드를 읽어서 변경해준다.
