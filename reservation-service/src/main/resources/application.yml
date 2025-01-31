@@ -20,7 +20,11 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-
+  data:
+    redis:
+      port: 6379
+      host: localhost
+      password: ""
   mvc:
     hidden method:
       filter:
@@ -45,4 +49,6 @@ springdoc:
     tags-sorter: alpha
     # alpha: 알파벳 순 태그 정렬, method: HTTP Method 순 정렬
     operations-sorter: alpha
+
+
 

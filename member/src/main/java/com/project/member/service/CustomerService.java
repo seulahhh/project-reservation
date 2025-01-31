@@ -44,7 +44,7 @@ public class CustomerService {
      */
     public String getCustomer (LoginForm form) {
         Customer customer =
-                customerRepository.findByEmailAndPassword(form.getEmail(),
+                customerRepository.findByEmailAndPassword(form.getUsername(),
                                                           form.getPassword())
                                   .orElseThrow(() ->
                                                        new RuntimeException(
@@ -135,12 +135,14 @@ public class CustomerService {
      * 예약하기
      */
     public ReservationDto createReservation(CreateReservationForm form) {
-        Long storeId = form.getStoreId();
-        Long customerId = form.getCustomerId();
         System.out.println(form.toString());
+        String email = SecurityContextHolder.getContext()
+                                           .getAuthentication()
+                                           .getName();
         ReservationDto res = webClient.post()
                                       .uri("/api/reservation")
                                       .header("Content-Type", "application/json")
+                                      .header("AUTH-CODE", email)
                                       .bodyValue(form)
                                       .retrieve()
                                       .bodyToMono(ReservationDto.class)

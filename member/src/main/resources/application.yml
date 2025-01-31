@@ -14,7 +14,11 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: reservation
     password: 1
-
+  data:
+    redis:
+      port: 6379
+      host: localhost
+      password: ""
   jpa:
     generate-ddl: true
     hibernate:

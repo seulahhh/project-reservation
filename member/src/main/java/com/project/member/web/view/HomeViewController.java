@@ -1,12 +1,18 @@
 package com.project.member.web.view;
 
+import com.project.member.model.dto.LoginForm;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
+@RequiredArgsConstructor
+@Slf4j
 public class HomeViewController {
     /**
      * 메인페이지
@@ -29,7 +35,7 @@ public class HomeViewController {
      * - view 페이지는 하나로 통일하고 경로에 따라 다른 ui 노출
      */
     @GetMapping("/customer/login")
-    public ModelAndView customerLogin(ModelAndView mv) {
+    public ModelAndView customerLogin(@ModelAttribute LoginForm form, ModelAndView mv) {
         mv.addObject("isCustomer", true);
         mv.setViewName("login");
         return mv;

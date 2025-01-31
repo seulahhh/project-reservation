@@ -19,14 +19,14 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CustomUserDetailsService userDetailsService;
-
+    private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
     @Order(1)
     @Bean
     public SecurityFilterChain customerFilterChain (
             HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+//                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .securityMatcher("/customer/**", "/reservation/**") // 이 필터체인은 /customer/login
                 // 에만 적용됨
                 .authorizeHttpRequests(auth ->
@@ -38,8 +38,7 @@ public class SecurityConfig {
                                                    .hasRole("CUSTOMER"))
                 .formLogin(login -> {
                     login.loginPage("/customer/login") // post url
-                         .failureUrl("/customer/login")
-                         .defaultSuccessUrl("/customer", true)// 로그인 성공
+                            .successHandler(customAuthenticationSuccessHandler)
                          // 후 기본 리다이렉션 경로
                          .failureUrl("/customer/login"); // 로그인 실패 시 경로
                 })
@@ -54,6 +53,7 @@ public class SecurityConfig {
             HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+//                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .securityMatcher("/manager/**") // 이 필터체인은 /customer/login 에만
                 // 적용됨
                 .authorizeHttpRequests(auth ->
@@ -63,7 +63,8 @@ public class SecurityConfig {
                                                    .hasRole("MANAGER"))
                 .formLogin(login -> {
                     login.loginPage("/manager/login")
-                         .defaultSuccessUrl("/manager", true) // 로그인 성공
+                         .successHandler(customAuthenticationSuccessHandler)
+
                          // 후 기본 리다이렉션 경로
                          .failureUrl("/manager/login"); // 로그인 실패 시 경로
                 })
@@ -79,7 +80,7 @@ public class SecurityConfig {
             HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-
+//                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/")
                         .permitAll()

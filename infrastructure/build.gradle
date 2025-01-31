@@ -29,6 +29,8 @@ dependencies {
     //kafka
     implementation 'org.springframework.kafka:spring-kafka'
 
+
+
     //localdatetime -> string mapping
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.5'
     //test
