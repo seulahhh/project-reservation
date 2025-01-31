@@ -51,7 +51,6 @@ public class ManagerApiController {
     public String deleteReview(@PathVariable Long reviewId) {
         // todo 리뷰를 삭제할거냐는 confirm 처리
         managerService.deleteReview(reviewId);
-        System.out.println("삭제완료");
         return "store/store-detail";
     }
 

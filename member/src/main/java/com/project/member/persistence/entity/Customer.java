@@ -43,13 +43,4 @@ public class Customer extends BaseEntity implements UserDetails {
     public String getUsername () {
         return email;
     }
-
-    public static Customer from(CustomerDto dto) {
-        return Customer.builder()
-                .email(dto.getEmail())
-                .phone(dto.getPhone())
-                .password(dto.getPassword())
-                .name(dto.getName())
-                .build();
-    }
 }

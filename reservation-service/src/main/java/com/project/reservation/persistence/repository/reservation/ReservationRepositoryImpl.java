@@ -1,4 +1,4 @@
-package com.project.reservation.persistence.repository;
+package com.project.reservation.persistence.repository.reservation;
 
 import com.project.reservation.persistence.entity.QReservation;
 import com.querydsl.jpa.impl.JPAQueryFactory;

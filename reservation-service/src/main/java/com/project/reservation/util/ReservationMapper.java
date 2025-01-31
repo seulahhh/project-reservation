@@ -27,7 +27,7 @@ public class ReservationMapper {
                 .build();
     }
 
-    public ReservationDto toReservationDto (Reservation reservation) {
+    public ReservationDto toDto (Reservation reservation) {
         return ReservationDto.builder()
                 .id(reservation.getId())
                 .reservationTime(reservation.getReservationTime())

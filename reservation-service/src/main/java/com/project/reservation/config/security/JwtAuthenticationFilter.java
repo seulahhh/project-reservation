@@ -28,19 +28,16 @@ import java.util.Collections;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenService jwtTokenService;
-//    private final RedisTemplate<String, String> redisTemplate;
+
     @Override
     protected void doFilterInternal (HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
-
         String token = resolveToken(request);
 
-        log.info("!!!!!!!!!!!!!!!!!!!!!!{}!!!!!!!!!!!!!!!!!!!!!!", token);
-
-        log.info("validation이 잘 됐니? {}", jwtTokenProvider.validateToken(token));
+        log.info("is validated token : {}", jwtTokenProvider.validateToken(token));
         if (token != null && jwtTokenProvider.validateToken(token)) {
-            log.info("검증까지완료했다!");
+            log.info("검증 완료 후 SecurityContext 세팅 시작");
             String username = jwtTokenProvider.getUsername(token);
             String role = jwtTokenProvider.getUserRole(token);
             System.out.println("role = " + role);
@@ -49,11 +46,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Authentication authentication =
                     new UsernamePasswordAuthenticationToken(username, null,
                                                            Collections.singletonList(authority));
-            log.info("Authentication object: {}", authentication);
             SecurityContext context = SecurityContextHolder.getContext();
             context
                                  .setAuthentication(authentication);
-            log.info("securityContextHoder : {}", SecurityContextHolder.getContext().getAuthentication());
+            log.info("{} --> Context setting 끝", SecurityContextHolder.getContext().getAuthentication());
         }
 
         filterChain.doFilter(request, response);
@@ -64,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String key = request.getHeader("AUTH-CODE");
 
         if (key == null || key.isEmpty()) {
-            log.info("not match authentication");
+            log.error("not match authentication");
         } else {
             token = jwtTokenService.getTokenFromRedis(key);
         }

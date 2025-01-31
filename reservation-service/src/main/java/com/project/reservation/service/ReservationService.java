@@ -6,7 +6,7 @@ import com.project.reservation.exception.CustomException;
 import com.project.global.dto.form.CreateReservationForm;
 import com.project.global.dto.ReservationStatus;
 import com.project.reservation.persistence.entity.Reservation;
-import com.project.reservation.persistence.repository.ReservationRepository;
+import com.project.reservation.persistence.repository.reservation.ReservationRepository;
 import com.project.reservation.util.ReservationMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class ReservationService {
     public ReservationDto createReservation (CreateReservationForm form) {
         getReservationAvailability(); // 예외처리 여기서 끝냄
         Reservation reservation = reservationMapper.toEntity(form);
-        return reservationMapper.toReservationDto(reservationRepository.save(reservation));
+        return reservationMapper.toDto(reservationRepository.save(reservation));
     }
 
     /**
@@ -63,7 +63,7 @@ public class ReservationService {
     public List<ReservationDto> getCustomerReservations (Long customerId) {
         return reservationRepository.findByCustomerId(customerId)
                                     .stream()
-                                    .map(reservationMapper::toReservationDto)
+                                    .map(reservationMapper::toDto)
                                     .toList();
 
     }
@@ -75,7 +75,7 @@ public class ReservationService {
 
         return reservationRepository.findByStoreId(storeId)
                                     .stream()
-                                    .map(reservationMapper::toReservationDto)
+                                    .map(reservationMapper::toDto)
                                     .toList();
 
 

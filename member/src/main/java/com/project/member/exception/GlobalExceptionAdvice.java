@@ -4,6 +4,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+/**
+ * 추후 global 로 분리 예정
+ */
 @ControllerAdvice
 public class GlobalExceptionAdvice {
 

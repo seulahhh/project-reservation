@@ -1,5 +1,8 @@
 package com.project.member.service;
 
+import com.project.member.exception.CustomException;
+import com.project.member.exception.ErrorCode;
+import com.project.member.model.dto.CustomerDto;
 import com.project.member.model.dto.LoginForm;
 import com.project.member.model.dto.ReservationDto;
 import com.project.member.model.dto.ReviewDto;
@@ -12,6 +15,7 @@ import com.project.member.persistence.entity.Store;
 import com.project.member.persistence.repository.CustomerRepository;
 import com.project.member.persistence.repository.ReviewRepository;
 import com.project.member.persistence.repository.StoreRepository;
+import com.project.member.util.mapper.CustomerMapper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +26,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.List;
 import java.util.Objects;
 
+import static com.project.member.exception.ErrorCode.*;
 import static com.project.member.model.types.Message.*;
 
 /**
@@ -30,6 +35,7 @@ import static com.project.member.model.types.Message.*;
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
+    private final CustomerMapper customerMapper;
     private final JPAQueryFactory queryFactory;
     private final CustomerRepository customerRepository;
     private final StoreRepository storeRepository;
@@ -60,7 +66,7 @@ public class CustomerService {
     public Message createReview (ReviewDto dto) {
         // 예약 내역 확인 후 리뷰 작성 가능
         Store store = storeRepository.findById(dto.getStoreId())
-                                     .orElseThrow(); // todo Custom Exception
+                                     .orElseThrow(() -> new CustomException(STORE_NOT_FOUND));
 
         Review newReview = Review.builder()
                 .title(dto.getTitle())
@@ -110,7 +116,7 @@ public class CustomerService {
      */
     public Review getReview (Long reviewId, Long customerId, Long storeId) {
         Review review = reviewRepository.findById(reviewId)
-                                        .orElseThrow(); // todo
+                                        .orElseThrow(() -> new CustomException(STORE_NOT_FOUND)); // todo
 
         // 해당 리뷰가 맞는 가게의 맞는 고객이 작성한 리뷰인지 먼저 확인
         if (!Objects.equals(reviewId, customerId)
@@ -142,7 +148,6 @@ public class CustomerService {
         ReservationDto res = webClient.post()
                                       .uri("/api/reservation")
                                       .header("Content-Type", "application/json")
-                                      .header("AUTH-CODE", email)
                                       .bodyValue(form)
                                       .retrieve()
                                       .bodyToMono(ReservationDto.class)
@@ -151,14 +156,33 @@ public class CustomerService {
     }
 
     /**
+     * 현재 로그인한 사용자의 email을 가져오기
+     */
+    public String getCurrentUserEmail() {
+        return SecurityContextHolder.getContext()
+                                    .getAuthentication()
+                                    .getName();
+    }
+
+    /**
      * 현재 로그인한 customer의 정보로 customerId 가져오기
      */
     public Long getCurrentCustomerId () {
-        String email = SecurityContextHolder.getContext()
-                                            .getAuthentication()
-                                            .getName();
+        String email = getCurrentUserEmail();
         Customer customer = customerRepository.findByEmail(email)
-                                              .orElseThrow(() -> new RuntimeException(""));// todo
+                                              .orElseThrow(() -> new CustomException(USER_NOT_FOUND));// todo
         return customer.getId();
+    }
+
+    /**
+     * 현재 로그인한 customer가져오기 (dto)
+     *
+     */
+    public CustomerDto getCustomerDto() {
+        String email = SecurityContextHolder.getContext()
+                                           .getAuthentication()
+                                           .getName();
+        Customer customer = customerRepository.findByEmail(email).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        return customerMapper.toDto(customer);
     }
 }

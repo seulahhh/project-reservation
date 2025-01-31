@@ -1,8 +1,8 @@
 server:
-  port: 8082
+  port: 8083
 spring:
   application:
-    name: reservation-service
+    name: store-service
   thymeleaf:
     suffix: .html
     prefix: classpath:/templates/
@@ -34,7 +34,7 @@ logging:
     org.springframework.security: debug
 # swagger
 springdoc:
-#  packages-to-scan: com.project.reservation-service
+  #  packages-to-scan: com.project.reservation-service
   cache:
     disabled: true
   api-docs:
@@ -49,6 +49,3 @@ springdoc:
     tags-sorter: alpha
     # alpha: 알파벳 순 태그 정렬, method: HTTP Method 순 정렬
     operations-sorter: alpha
-
-
-
