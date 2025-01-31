@@ -17,13 +17,13 @@ public class StoreViewController {
 
     private final ManagerService managerService;
     /**
-     * Customer - 매장 페이지 진입
+     * 사용자가 매장 조회 페이지로 이동중,
+     * 위치를 먼저 불러 온 후 이동할 수 있도록
+     * 로딩중 페이지를 먼저 보여줌
      */
-    @GetMapping("/customer/stores")
-    public String customerStoresPage (Model model) {
-        // todo 기본 이름순 정렬이 된 상태에서 보여줄 것 인지, 빈 리스트를 보여줄 것인지 검토
-        // 정렬 기준이면 해당컨트롤러위치 옮겨야함
-        return "customer/store";
+    @GetMapping("/customer/stores/process")
+    public String processingPage() {
+        return "process-ing";
     }
 
     /**

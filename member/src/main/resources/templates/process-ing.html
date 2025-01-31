@@ -1,0 +1,67 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>사용자 위치조회중</title>
+    <script>
+        window.onload = async function () {
+            try{
+                // 1. 위치 정보를 받아오기
+                const position = await getCurrentLocation();
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                console.log("위도:", latitude);
+                console.log("경도:", longitude);
+
+                // 2. 사용자의 위치정보를 담아 매장리스트 view 요청(초기 화면은 이름순)
+                window.location.href = `/customer/stores?sortby=name&lat=${latitude}&lnt=${longitude}`;
+                // window.location.href = `/customer/stores`;
+
+                // 3. 요청 후 나머지는 controller에게 위임함
+                // const data = await fetchData(apiUrl);
+                // if (data.ok) {
+                //
+                // }
+                // const innerHtml = await data.text();
+                // console.log("API에서 받은 데이터:", data);
+                // document.getElementById('dynamicContainer').innerHTML = innerHtml;
+            //
+            } catch (error) {
+                console.error("오류 발생:", error);
+            }
+        }
+        function getCurrentLocation() {
+            return new Promise((resolve, reject) => {
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition(resolve, reject);
+                } else {
+                    reject("Geolocation을 지원하지 않는 브라우저입니다.");
+                }
+            });
+        }
+
+        async function fetchData(url) {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error("API 호출 실패");
+            }
+            return response;
+        }
+
+        function changeElement() {
+            const listContainer =document.getElementById("listContainer");
+            if (listContainer !== null) {
+                listContainer.remove();
+            }
+            const dynamicContainer = document.getElementById("dynamicContainer");
+            dynamicContainer.style.display = 'block';
+        }
+    </script>
+</head>
+<body>
+<h1>(사용자 위치 조회중)...</h1>
+</body>
+</html>

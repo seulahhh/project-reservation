@@ -48,6 +48,25 @@ public class StoreService {
     }
 
     /**
+     * 이름순, (distnace정보도  포함 ver)
+     */
+    public List<StoreDto> showOrderByNameWithDistance (LocationDto locationDto) {
+        NumberExpression<Double> distance = getDistance(locationDto);
+        List<StoreDto> resultList =
+                queryFactory.select(Projections.fields(
+                                    StoreDto.class,
+                                    qStore.id, qStore.name
+                                    , qStore.number, qStore.rating,
+                                    distance.as("distance")))
+                            .from(qStore)
+                            .orderBy(qStore.name.asc())
+                            .fetch();
+        if (resultList.isEmpty()) {
+            throw new RuntimeException("존재하는 데이터가 없습니다");
+        }
+        return resultList;
+    }
+    /**
      * sort store - asc
      * - 이름순
      */
@@ -60,7 +79,25 @@ public class StoreService {
         }
         return StoresToDtoList(resultList);
     }
-
+    /**
+     * 별점순, (distnace정보도  포함 ver)
+     */
+    public List<StoreDto> showOrderByRatingWithDistance (LocationDto locationDto) {
+        NumberExpression<Double> distance = getDistance(locationDto);
+        List<StoreDto> resultList =
+                queryFactory.select(Projections.fields(
+                                    StoreDto.class,
+                                    qStore.id, qStore.name
+                                    , qStore.number, qStore.rating,
+                                    distance.as("distance")))
+                            .from(qStore)
+                            .orderBy(qStore.rating.asc())
+                            .fetch();
+        if (resultList.isEmpty()) {
+            throw new RuntimeException("존재하는 데이터가 없습니다");
+        }
+        return resultList;
+    }
     /**
      * sort store
      * - 별점순

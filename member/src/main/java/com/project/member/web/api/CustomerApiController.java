@@ -1,5 +1,6 @@
 package com.project.member.web.api;
 
+import com.project.member.exception.CustomException;
 import com.project.member.model.dto.LocationDto;
 import com.project.member.model.dto.ReservationDto;
 import com.project.member.model.dto.ReviewDto;
@@ -17,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/customer")
@@ -28,36 +28,34 @@ public class CustomerApiController {
     private final StoreRepository storeRepository;
     private final ManagerService managerService;
 
+
     /**
-     * 매장 보여주기 (이름순, 별점순)
+     * sortby 조건별로 리스트 rendering
+     * @param sortby
+     * @param lat
+     * @param lnt
+     * @param model
+     * @return
      */
-    @GetMapping("/stores/search")
-    public ModelAndView searchStoresSortBy (
-            @RequestParam Map<String, Object> requestMap) {
-        ModelAndView mv = new ModelAndView();
-        List<StoreDto> resultList = new ArrayList<>();
-        if (requestMap.get("sort")
-                      .equals("rating")) {
-            resultList.addAll(storeService.showOrderByRatingAsc());
-        } else { // 기본 정렬은 이름순
-            resultList.addAll(storeService.showOrderByNameAsc());
+    @GetMapping("/stores")
+    public String getStoresSortBy (
+            @RequestParam String sortby, @RequestParam Double lat, @RequestParam Double lnt,
+            Model model) {
+        List<StoreDto> results = new ArrayList<>();
+
+        if (sortby.isEmpty()) {
+
         }
-        mv.setViewName("customer/store");
-        mv.addObject(resultList);
-        return mv;
-    }
-
-    /**
-     * 매장 보여주기 (거리순)
-     */
-    @GetMapping("/stores/search/distance")
-    public String searchStoresSortByDistance (@RequestParam Double lat,
-            @RequestParam Double lnt, Model model) {
-        List<StoreDto> resultList =
-                storeService.showOrderByDistanceAsc(LocationDto.of(lat, lnt));
-        model.addAttribute("processedData", resultList);
-
-        return "customer/storeFragments";
+        if (sortby.equals("name")) {
+            results = storeService.showOrderByNameWithDistance(LocationDto.of(lat, lnt));
+        } else if (sortby.equals("distance")) {
+            results = storeService.showOrderByDistanceAsc(LocationDto.of(lat, lnt));
+        } else if (sortby.equals("rating")) {
+            results = storeService.showOrderByRatingWithDistance(LocationDto.of(lat, lnt));
+        }
+        model.addAttribute(results);
+        model.addAttribute("location", LocationDto.of(lat, lnt)); // 위치 dto 도 함께 내려줌 (이후 다른 정렬순으로 조회할때 사용필요)
+        return "customer/store";
     }
 
     /**
