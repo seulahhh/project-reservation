@@ -1,4 +1,4 @@
-package com.project.infrastructure.kafka;
+package com.project.global.kafka;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;

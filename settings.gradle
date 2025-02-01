@@ -1,7 +1,6 @@
 rootProject.name = 'project-reservation'
 include 'member'
 include 'reservation-service'
-include 'infrastructure'
 include 'global'
 include 'store-service'
 

@@ -35,7 +35,6 @@ logging:
   level:
     org.springframework.security: debug
 
-# nginx 포트번호 - docker로 띄운 뒤 수정 필요
 api:
   base:
-    url: http://localhost:8085
+    url: http://localhost:8082

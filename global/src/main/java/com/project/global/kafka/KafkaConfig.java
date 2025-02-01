@@ -1,4 +1,4 @@
-package com.project.infrastructure.kafka;
+package com.project.global.kafka;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;

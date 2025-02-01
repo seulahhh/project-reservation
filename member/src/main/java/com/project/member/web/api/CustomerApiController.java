@@ -1,12 +1,9 @@
 package com.project.member.web.api;
 
-import com.project.member.exception.CustomException;
-import com.project.member.model.dto.LocationDto;
-import com.project.member.model.dto.ReservationDto;
+import com.project.global.dto.LocationDto;
 import com.project.member.model.dto.ReviewDto;
 import com.project.member.model.dto.StoreDto;
 import com.project.member.model.dto.form.CreateReservationForm;
-import com.project.member.persistence.repository.StoreRepository;
 import com.project.member.service.CustomerService;
 import com.project.member.service.ManagerService;
 import com.project.member.service.StoreService;
@@ -24,8 +21,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomerApiController {
     private final CustomerService customerService;
-    private final StoreService storeService;
-    private final StoreRepository storeRepository;
     private final ManagerService managerService;
 
 

@@ -1,4 +1,4 @@
-package com.project.global.dto;
+package com.project.global.dto.form;
 
 import lombok.*;
 

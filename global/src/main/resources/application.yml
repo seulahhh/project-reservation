@@ -4,3 +4,22 @@ spring:
       port: 6379
       host: localhost
       password: ""
+  application:
+    name: infrastructure
+  kafka:
+    #producer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    #consumer
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringSerializer
+      value-deserializer: org.apache.kafka.common.serialization.StringSerializer
+      bootstrap-servers: localhost:9092
+logging:
+  level:
+    com.project.infrastructure: DEBUG
+    org:
+      apache.kafka: INFO
+      springframework.kafka: INFO

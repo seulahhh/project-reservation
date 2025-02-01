@@ -22,7 +22,6 @@ public class JwtTokenService {
         log.info("stored complete @@ token : {}", token);
     }
 
-
     public String getTokenFromRedis(String email) {
         String token = redisTemplate.opsForValue().get(email);
         log.info("email: {}", email);

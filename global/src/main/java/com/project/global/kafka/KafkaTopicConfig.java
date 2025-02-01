@@ -1,4 +1,4 @@
-package com.project.infrastructure.kafka;
+package com.project.global.kafka;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.config.TopicConfig;
@@ -14,7 +14,7 @@ import org.springframework.kafka.config.TopicBuilder;
 public class KafkaTopicConfig {
 
     /**
-     * Manager->Customer로 전달되는 메세지
+     * Customer로 전달되는 메세지
      * @return NewTopic
      */
     @Bean
@@ -30,7 +30,7 @@ public class KafkaTopicConfig {
     }
 
     /**
-     * Customer->Manager 또는 예약시스템->Manager로 전달되는 메세지
+     * Manager로 전달되는 메세지
      * @return NewTopic
      */
     @Bean

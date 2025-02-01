@@ -16,7 +16,6 @@ java {
     }
 }
 dependencies {
-    implementation project(":infrastructure")
     implementation project(":global")
 
     testImplementation platform('org.junit:junit-bom:5.10.0')

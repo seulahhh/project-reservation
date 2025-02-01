@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.security.core.userdetails.User;
 
 @Getter
 public class CustomException extends RuntimeException {
@@ -16,6 +17,7 @@ public class CustomException extends RuntimeException {
         this.errorCode = errorCode;
         this.status = errorCode.getHttpStatus().value();
     }
+
 
     @Getter
     @AllArgsConstructor

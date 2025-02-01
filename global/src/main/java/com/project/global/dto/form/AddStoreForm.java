@@ -1,4 +1,4 @@
-package com.project.member.model.dto.form;
+package com.project.global.dto.form;
 
 import lombok.*;
 
@@ -8,8 +8,9 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class AddStoreForm {
-    private String name;
+    private Long managerId;
 
+    private String name;
     private String number;
 
     private Double lat;

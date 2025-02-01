@@ -1,8 +1,7 @@
 package com.project.member.web.api;
 
 import com.project.member.model.dto.StoreDto;
-import com.project.member.model.dto.form.AddStoreForm;
-import com.project.member.persistence.repository.StoreRepository;
+import com.project.global.dto.form.AddStoreForm;
 import com.project.member.service.ManagerService;
 import jakarta.servlet.ServletRequest;
 import lombok.RequiredArgsConstructor;

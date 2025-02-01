@@ -1,6 +1,6 @@
 package com.project.reservation.service;
 
-import com.project.global.dto.ArrivalCheckForm;
+import com.project.global.dto.form.ArrivalCheckForm;
 import com.project.global.dto.ReservationDto;
 import com.project.reservation.exception.CustomException;
 import com.project.global.dto.form.CreateReservationForm;

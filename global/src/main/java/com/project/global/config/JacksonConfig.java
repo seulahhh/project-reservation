@@ -1,4 +1,4 @@
-package com.project.global.dto.config;
+package com.project.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;

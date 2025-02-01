@@ -1,21 +1,29 @@
-package com.project.member.service;
+package com.project.reservation.service;
 
-import com.project.member.model.dto.LocationDto;
-import com.project.member.model.dto.StoreDto;
-import com.project.member.persistence.entity.QStore;
-import com.project.member.persistence.entity.Store;
-import com.project.member.persistence.repository.ReviewRepository;
-import com.project.member.persistence.repository.StoreRepository;
-import com.project.member.util.DistanceCalculator;
+
+import com.project.global.dto.form.AddStoreForm;
+import com.project.global.dto.LocationDto;
+import com.project.reservation.exception.CustomException;
+import com.project.reservation.model.dto.form.StoreDto;
+import com.project.reservation.persistence.entity.QStore;
+import com.project.reservation.persistence.entity.Store;
+import com.project.reservation.persistence.repository.review.ReviewRepository;
+import com.project.reservation.persistence.repository.store.StoreRepository;
+import com.project.reservation.util.DistanceCalculator;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.project.reservation.exception.ErrorCode.STORE_ALREADY_REGISTERED;
+import static com.project.reservation.exception.ErrorCode.STORE_NOT_FOUND;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class StoreService {
@@ -31,14 +39,13 @@ public class StoreService {
     public List<StoreDto> showOrderByDistanceAsc (LocationDto locationDto) {
         NumberExpression<Double> distance = getDistance(locationDto);
         List<StoreDto> resultList =
-                queryFactory.select(Projections.fields(
-                                    StoreDto.class,
-                                    qStore.id, qStore.name
+                queryFactory.select(Projections.fields(StoreDto.class,
+                                                       qStore.id, qStore.name
                                     , qStore.number, qStore.rating,
-                                    distance.as("distance")))
-                            .from(qStore)
-                            .orderBy(distance.asc())
-                            .fetch();
+                                                       distance.as("distance")))
+                                                .from(qStore)
+                                                .orderBy(distance.asc())
+                                                .fetch();
 
         if (resultList.isEmpty()) {
             throw new RuntimeException("존재하는 데이터가 없습니다");
@@ -50,22 +57,23 @@ public class StoreService {
     /**
      * 이름순, (distnace정보도  포함 ver)
      */
-    public List<StoreDto> showOrderByNameWithDistance (LocationDto locationDto) {
+    public List<StoreDto> showOrderByNameWithDistance (
+            LocationDto locationDto) {
         NumberExpression<Double> distance = getDistance(locationDto);
         List<StoreDto> resultList =
-                queryFactory.select(Projections.fields(
-                                    StoreDto.class,
-                                    qStore.id, qStore.name
+                queryFactory.select(Projections.fields(StoreDto.class,
+                                                       qStore.id, qStore.name
                                     , qStore.number, qStore.rating,
-                                    distance.as("distance")))
-                            .from(qStore)
-                            .orderBy(qStore.name.asc())
-                            .fetch();
+                                                       distance.as("distance")))
+                                                .from(qStore)
+                                                .orderBy(qStore.name.asc())
+                                                .fetch();
         if (resultList.isEmpty()) {
             throw new RuntimeException("존재하는 데이터가 없습니다");
         }
         return resultList;
     }
+
     /**
      * sort store - asc
      * - 이름순
@@ -77,27 +85,29 @@ public class StoreService {
         if (resultList.isEmpty()) {
             throw new RuntimeException("존재하는 데이터가 없습니다");
         }
-        return StoresToDtoList(resultList);
+        return storesToDtoList(resultList);
     }
+
     /**
      * 별점순, (distnace정보도  포함 ver)
      */
-    public List<StoreDto> showOrderByRatingWithDistance (LocationDto locationDto) {
+    public List<StoreDto> showOrderByRatingWithDistance (
+            LocationDto locationDto) {
         NumberExpression<Double> distance = getDistance(locationDto);
         List<StoreDto> resultList =
-                queryFactory.select(Projections.fields(
-                                    StoreDto.class,
-                                    qStore.id, qStore.name
+                queryFactory.select(Projections.fields(StoreDto.class,
+                                                       qStore.id, qStore.name
                                     , qStore.number, qStore.rating,
-                                    distance.as("distance")))
-                            .from(qStore)
-                            .orderBy(qStore.rating.asc())
-                            .fetch();
+                                                       distance.as("distance")))
+                                                .from(qStore)
+                                                .orderBy(qStore.rating.asc())
+                                                .fetch();
         if (resultList.isEmpty()) {
             throw new RuntimeException("존재하는 데이터가 없습니다");
         }
         return resultList;
     }
+
     /**
      * sort store
      * - 별점순
@@ -112,25 +122,45 @@ public class StoreService {
         }
         resultList.forEach(store -> updateStoreRating(store.getId()));
 
-        return StoresToDtoList(resultList);
+        return storesToDtoList(resultList);
     }
 
+    /**
+     * 매장 등록하기
+     * 예외처리 O
+     */
+    @Transactional
+    public boolean addStore (AddStoreForm form) {
+        Long managerId = form.getManagerId();
+        if (storeRepository.findStoreByManagerId(managerId)
+                           .isPresent()) {
+            throw new CustomException(STORE_ALREADY_REGISTERED);
+        }
+
+        Store store = Store.builder()
+                .name(form.getName())
+                .managerId(managerId)
+                .number(form.getNumber())
+                .lat(form.getLat())
+                .lnt(form.getLnt())
+                .build();
+
+        storeRepository.save(store);
+        return true;
+    }
 
     /**
-     * 매장 상세 페이지 보여주기
-     * - 매장 리스트에서 버튼 클릭 후 진입
-     * Exception O
+     * 매장 상세 페이지 가져오기
      */
-    public StoreDto showStoreDetail (Long storeId) {
+    public StoreDto getStoreDetails (Long storeId) {
         Store store = storeRepository.findById(storeId)
-                                     .orElseThrow(() -> new RuntimeException(
-                                             "해당 매장이 존재하지 않습니다"));
-                                             // todo Custome Exception
+                                     .orElseThrow(() -> new CustomException(STORE_NOT_FOUND));
         return StoreDto.from(store);
     }
 
     /**
      * 거리 계산하기
+     *
      * @param locationDto 요청으로 받은 좌표
      * @return Q클래스 반환
      */
@@ -143,7 +173,7 @@ public class StoreService {
     /**
      * Entity -> Dto mapping
      */
-    public List<StoreDto> StoresToDtoList (List<Store> stores) {
+    public List<StoreDto> storesToDtoList (List<Store> stores) {
         return stores.stream()
                      .map(StoreDto::from)
                      .toList();
@@ -160,13 +190,12 @@ public class StoreService {
     public void updateStoreRating (Long storeId) {
         Double storeRating =
                 reviewRepository.findAverageRatingByStore_Id(storeId)
-                                .orElse(0.0);
+                                             .orElse(0.0);
         Store store = storeRepository.findById(storeId)
-                                     .orElseThrow(() -> new RuntimeException(
-                                             "Not Found Store"));
+                                     .orElseThrow(() -> new CustomException(STORE_NOT_FOUND));
 
         store.setRating(storeRating);
-        System.out.println("별점 업데이트 완료");
+        log.info("별점 업데이트 완료");
     }
 
     /**
@@ -174,7 +203,24 @@ public class StoreService {
      */
     public String getStoreNameById (Long storeId) {
         Store store = storeRepository.findById(storeId)
-                                     .orElseThrow(() -> new RuntimeException());// todo
+                                     .orElseThrow(() -> new CustomException(STORE_NOT_FOUND));// todo
         return store.getName();
+    }
+
+    /**
+     * 매니저 Id로 매장 찾고 매장 dto 반환
+     */
+    public StoreDto findStoreByManagerId (Long managerId) {
+        return StoreDto.from(storeRepository.findStoreByManagerId(managerId)
+                                            .orElseThrow(() -> new CustomException(STORE_NOT_FOUND)));
+    }
+
+    /**
+     * 매장 삭제하기
+     */
+    @Transactional
+    public void deleteStore (Long storeId) {
+        storeRepository.delete(storeRepository.findById(storeId)
+                                              .orElseThrow(() -> new CustomException(STORE_NOT_FOUND)));
     }
 }

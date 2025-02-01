@@ -1,34 +1,29 @@
-package com.project.member.model.dto;
+package com.project.reservation.model.dto.form;
 
-import com.project.member.persistence.entity.Review;
+import com.project.reservation.persistence.entity.Review;
+import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Builder
-@Setter
 @AllArgsConstructor
-@RequiredArgsConstructor
-@ToString
+@NoArgsConstructor
 public class ReviewDto {
     private Long id;
-
+    private Long customerId;
+    private Long storeId;
     private String title;
     private String body;
     private Double rating;
 
-    private Long storeId;
-    private Long customerId;
-
-    public static ReviewDto from (Review review) {
+    public static ReviewDto from(Review review) {
         return ReviewDto.builder()
+                .customerId(review.getCustomerId())
                 .id(review.getId())
+                .storeId(review.getStore().getId())
                 .title(review.getTitle())
                 .body(review.getBody())
                 .rating(review.getRating())
-                .storeId(review.getStore().getId())
-                .customerId(review.getCustomerId())
                 .build();
     }
 }

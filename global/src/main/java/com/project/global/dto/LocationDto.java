@@ -1,4 +1,4 @@
-package com.project.member.model.dto;
+package com.project.global.dto;
 
 import lombok.*;
 

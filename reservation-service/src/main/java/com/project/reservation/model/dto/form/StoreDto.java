@@ -1,6 +1,6 @@
-package com.project.member.model.dto;
+package com.project.reservation.model.dto.form;
 
-import com.project.member.persistence.entity.Store;
+import com.project.reservation.persistence.entity.Store;
 import lombok.*;
 
 import java.util.List;
@@ -27,10 +27,7 @@ public class StoreDto {
         return StoreDto.builder()
                 .id(store.getId())
                 .name(store.getName())
-                .reviews(store.getReviews()
-                              .stream()
-                              .map(ReviewDto::from)
-                              .collect(Collectors.toList()))
+                .reviews(store.getReviews().stream().map(ReviewDto::from).toList())
                 .number(store.getNumber())
                 .lat(store.getLat())
                 .lnt(store.getLnt())

@@ -1,7 +1,7 @@
-package com.project.member.util;
+package com.project.reservation.util;
 
 
-import com.project.member.persistence.entity.QStore;
+import com.project.reservation.persistence.entity.QStore;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import lombok.RequiredArgsConstructor;
