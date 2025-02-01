@@ -1,0 +1,329 @@
+:root {
+    --content-box-size: 400px;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Nanum Gothic";
+    border-collapse: collapse;
+}
+
+ol, ul, li {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button {
+    text-decoration: none;
+}
+.check-svg {
+}
+
+.flex-box {
+    display: flex;
+
+}
+.flex-box > li {
+    flex: 1;
+    text-align: center;
+    justify-content: space-between;
+    align-content: center;
+    height: 3rem;
+}
+
+.list-container > li:nth-child(2n) {
+    background-color: #fafafa;
+}
+
+.custom-button {
+    border: 1px solid gray;
+    padding: 4px 10px;
+    border-radius: .5em;
+    box-shadow: #6e6e6e 1px 1px 3px 0;
+    background-color: #ffffff;
+    position: relative;
+    left: -1px;
+    top: -1px;
+    transition-duration: .2s;
+    cursor: pointer;
+    font-size: .9rem;
+}
+
+.custom-button:hover {
+    box-shadow: none;
+    left: 0;
+    top: 0;
+    transition-duration: .2s;
+    background-color: #ebf3ff;
+}
+
+.button-container {
+    display: flex;
+    min-width: 400px;
+    margin-left: auto;
+    justify-content: space-between;
+    align-content: center;
+
+}
+
+li > .custom-button {
+    display: block;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.submit-button {
+    border: 1px solid gray;
+    padding: 8px 20px;
+    width: fit-content;
+    border-radius: .5em;
+    box-shadow: #6e6e6e 1px 1px 3px 0;
+    background-color: #ffffff;
+    position: relative;
+    left: -1px;
+    top: -1px;
+    transition-duration: .2s;
+    cursor: pointer;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.submit-button:hover {
+    box-shadow: none;
+    left: 0;
+    top: 0;
+    transition-duration: .2s;
+    background-color: #ebf3ff;
+}
+
+.display-container {
+    max-width: 80%;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    border: 1px dotted #adadad; /* 수정필요 */
+    width: 80vw;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.list-head {
+    background-color: rgba(159, 159, 159, 0.16);
+    border: 1px solid #b6b6b6;
+    font-weight: 600;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+
+}
+
+.list-container {
+    border: 1px solid #b6b6b6;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    overflow: hidden;
+}
+
+.list-header {
+}
+
+#storeNew .display-container,
+#register .display-container,
+#storeDetail .display-container,
+#reservationNew .display-container,
+#login .display-container{
+    padding: 80px;
+    border: 1px solid #b6b6b6;
+    border-radius: 10px;
+}
+#register .display-container > form,
+#storeNew .display-container > form,
+#storeDetail .display-container > form,
+#login .display-container > form,
+#reservationNew .display-container > form{
+    min-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-size: 18px;
+}
+#storeNew .display-container > form > div,
+#register .display-container > form > div,
+#storeDetail .display-container > form > div,
+#reservationNew .display-container > form > div,
+#login .display-container > form > div {
+    display: flex;
+    gap: 7px;
+    justify-content: center;
+    flex-direction: column;
+}
+#storeNew .display-container > form > .button-container,
+#register .display-container > form > .button-container,
+#storeDetail .display-container > form > .button-container,
+#reservationNew .display-container > form > .button-container,
+#login .display-container > form > .button-container {
+    flex-direction: row;
+    padding-top: 20px;
+}
+
+#storeNew .display-container > form input,
+#register .display-container > form input,
+#storeDetail .display-container > form input,
+#reservationNew .display-container > form input,
+#login .display-container > form input {
+    height: 35px;
+    border-radius: .5rem;
+    border: 1px solid gray
+}
+
+#storeNew .flex-box {
+}
+
+
+#reservationComplete .flex-box {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+
+}
+.store-detail-body,
+.reservation-complete-body {
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-size: 18px;
+}
+.store-detail-body>li,
+.reservation-complete-body>li {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+
+}
+.store-detail-body>li>span,
+.reservation-complete-body>li>span {
+    flex: 1;
+    width: fit-content;
+}
+.store-detail-body>li>span:first-child,
+.reservation-complete-body>li>span:first-child {
+    font-weight: 700;
+}
+
+.store-detail-body>li>span:nth-child(2),
+.reservation-complete-body>li>span:nth-child(2) {
+    min-width: 200px
+}
+.review-list {
+    flex-direction: column;
+}
+.review-list > span{
+    flex-grow: 1;
+    min-width: 120px
+}
+.store-detail-reviews {
+    flex-flow: wrap;
+    display: flex;
+    gap: 15px;
+    border-bottom: 1px solid #b6b6b6;
+    padding-bottom: 15px;
+}
+.store-detail-reviews >li {
+    max-width: 100%;
+}
+.store-detail-reviews >li.review-title {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-wrap: break-word;
+    font-weight: 600;
+}
+.store-detail-reviews >li.review-body {
+
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+.store-detail-reviews >li.review-rating {
+    padding-left: 10px;
+}
+.review-list > span {
+    flex: 1;
+    flex-basis: fit-content;
+
+}
+
+#reservationComplete .list-container {
+    width: fit-content;
+}
+
+.box-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+.info-required {
+    position: relative;
+    z-index: 1;
+}
+.info-required::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    bottom: -5px;
+    left: 0;
+    background-color: rgb(255, 222, 222);
+    width: 100%;
+    height: 30%;
+}
+
+.store-detail-reviews .button-container {
+    min-width: unset;
+    gap: 10px;
+    justify-content: right;
+}
+#loading {
+    border: none;
+}
+#loading .box-header{
+ padding: 30vh 0;
+}
+#loading .header-loading {
+    position: relative;
+}
+#loading .header-loading::after {
+    content: "";
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    left: calc(50% - 100px);
+    top: calc(50% - 100px);
+    border-radius: 50%;
+    z-index: -1 ;
+    background-color: #ebf3ff;
+}
+#register .display-container > form > div.radio-container {
+    flex-direction: row;
+    align-items: center;
+    gap: 50px;
+}
+#register .display-container > form > div.radio-container>div{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+#register .display-container > form > div.radio-container input {
+    width: 25px;
+}
+#managerHome .button-container {
+    margin-left: 0;
+    justify-content: center;
+    gap: 50px;
+}

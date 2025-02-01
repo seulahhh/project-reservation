@@ -6,23 +6,27 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>예약하는 페이지</title>
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<!--id는 카멜케이스 사용 / class 는 케밥케이스 사용-->
 <body>
-<h1>예약하는 페이지</h1>
-<div class="section">
-    <form th:action="@{/customer/reservation/7}" method="post">
-        <div>
-            <label for="reservationTime">reservationTime:</label>
-            <input type="text" id="reservationTime" name="reservationTime">
+<div class="section" id="reservationNew">
+    <div class="flex-box">
+        <div class="display-container">
+            <form th:action="@{/customer/reservation/7}" method="post">
+                <div>
+                    <label for="reservationTime">예약 일시</label>
+                    <input type="text" id="reservationTime" name="reservationTime" required>
+                </div>
+                <div>
+                    <label for="guestCount">예약 인원</label>
+                    <input type="text" id="guestCount" name="guestCount" required>
+                </div>
+                <div class="button-container">
+                    <button class="submit-button" type="submit">예약하기</button>
+                </div>
+            </form>
         </div>
-        <div>
-            <label for="guestCount">guestCount:</label>
-            <input type="text" id="guestCount" name="guestCount">
-        </div>
-
-        <button type="submit">예약하기</button>
-    </form>
+    </div>
 </div>
 </body>
 </html>

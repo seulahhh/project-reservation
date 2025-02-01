@@ -5,40 +5,68 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-
+    <title>매장 상세 정보</title>
+    <link rel="stylesheet" href="/static/css/style.css">
 <!--    /manager/store  -->
 </head>
 <body>
-manager의 매장 보기 페이지!
-
-    <ul>
-        <li>
-            <span>매장 이름 :</span>
-            <span th:text="${storeDto.getName()}"></span>
-        </li>
-        <li>
-            <span>매장 번호 :</span>
-            <span th:text="${storeDto.getNumber()}"></span>
-        </li>
-        <li>
-            <span>매장 별점 :</span>
-            <span th:text="${storeDto.getRating()}"></span>
-        </li>
-        <li>
-            <p>매장 리뷰</p>
-            <ul th:each="review : ${storeDto.getReviews()}">
-                <li th:text="'제목' + ${review.getTitle()}"></li>
-                <li th:text="'내용' + ${review.getBody()}"></li>
-                <li th:text="'별점' + ${review.getRating()}"></li>
+<div class="section" id="storeDetail">
+    <div class="flexbox">
+        <div class="box-header">
+            <h1 th:text="${storeDto.getName()}">매장명</h1>
+        </div>
+        <div>
+            <ul class="store-detail-body">
                 <li>
-                    <form th:action="@{/manager/store/reviews/{reviewId}(reviewId=${review.getId()})}" th:method="delete">
-                        <input type="hidden">
-                        <button sec:authorize="hasRole('ROLE_MANAGER')" type="submit">삭제</button>
-                    </form>
+                    <span>매장 이름</span>
+                    <span th:text="${storeDto.getName()}"></span>
+                </li>
+                <li>
+                    <span>전화번호</span>
+                    <span th:text="${storeDto.getNumber()}"></span>
+                </li>
+                <li>
+                    <span>평점</span>
+                    <span th:text="${storeDto.getRating()}"></span>
+                </li>
+                <li>
+                    <span>매장 리뷰</span>
+                </li>
+                <li class="review-list">
+
+                    <ul th:each="review : ${storeDto.getReviews()}" class="store-detail-reviews">
+                        <li class="review-title" th:text="${review.getTitle()}">eee</li>
+                        <li class="review-rating" th:text="${review.getRating()}"></li>
+                        <li class="review-body" th:text="${review.getBody()}">dfdfdfdddddddfdfdfdddddddfdfdfdddddddfdfdfdddddddfdfdfdddddddfdfdfdddddddfdfdfdddddddfdfdfdddddd
+                        <li>
+                            <form th:action="@{/manager/store/reviews/{reviewId}(reviewId=${review.getId()})}" th:method="delete">
+                                <input type="hidden">
+                                <div class="button-container">
+                                    <button class="custom-button" sec:authorize="hasRole('ROLE_MANAGER')" type="submit">삭제</button>
+                                    <button class="custom-button" sec:authorize="hasRole('ROLE_CUSTOMER')" type="submit">수정</button>
+                                </div>
+                            </form>
+                        </li>
+                    </ul>
+                    <ul th:each="review : ${storeDto.getReviews()}" class="store-detail-reviews">
+                        <li class="review-title" th:text="${review.getTitle()}">eee</li>
+                        <li class="review-rating" th:text="${review.getRating()}"></li>
+                        <li class="review-body" th:text="${review.getBody()}">dfdfdfdddddddfdfdfdddddddfdfdfdddddddfdfdfdddddddfdfdfdddddddfdfdfdddddddfdfdfdddddddfdfdfdddddd
+                        <li>
+                            <form th:action="@{/manager/store/reviews/{reviewId}(reviewId=${review.getId()})}" th:method="delete">
+                                <input type="hidden">
+                                <div class="button-container">
+                                    <button class="custom-button" sec:authorize="hasRole('ROLE_MANAGER')" type="submit">삭제</button>
+                                    <button class="custom-button" sec:authorize="hasRole('ROLE_CUSTOMER')" type="submit">수정</button>
+                                </div>
+                            </form>
+                        </li>
+                    </ul>
                 </li>
             </ul>
-        </li>
-    </ul>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

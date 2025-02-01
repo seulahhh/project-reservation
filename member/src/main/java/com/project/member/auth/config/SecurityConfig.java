@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .formLogin(login -> {
                     login.loginPage("/customer/login") // post url
                             .successHandler(customAuthenticationSuccessHandler)
-                         // 후 기본 리다이렉션 경로
+                         // 후 기본 리다이렉션 경로1
                          .failureUrl("/customer/login"); // 로그인 실패 시 경로
                 })
                 .httpBasic(httpBasic -> httpBasic.realmName("myapp"));

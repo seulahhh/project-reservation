@@ -5,6 +5,8 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/static/css/style.css">
+
     <title>사용자 위치조회중</title>
     <script>
         window.onload = async function () {
@@ -44,6 +46,10 @@
     </script>
 </head>
 <body>
-<h1>(사용자 위치 조회중)...</h1>
+<div class="section" id="loading">
+    <div class="box-header">
+        <h1 class="header-loading">-- loading --</h1>
+    </div>
+</div>
 </body>
 </html>

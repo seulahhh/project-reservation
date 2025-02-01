@@ -6,115 +6,35 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Reservation Complete</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Nanum Gothic";
-            border-collapse: collapse;
-        }
-        ol, ul, li {
-            list-style: none;
-        }
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-        button {
-            text-decoration: none;
-        }
-        .flex-box {
-            display: flex;
-
-        }
-        .flex-box > li{
-            flex: 1;
-            text-align: center;
-            justify-content: space-between;
-            align-content: center;
-            height: 3rem;
-        }
-        .list-container > li:nth-child(2n) {
-            background-color: #fafafa;
-        }
-        .custom-button {
-            border: 1px solid gray;
-            padding: 4px 10px;
-            border-radius: .5em;
-            box-shadow: #6e6e6e 1px 1px 3px 0;
-            background-color: #ffffff;
-            position: relative;
-            left: -1px;
-            top: -1px;
-            transition-duration:  .2s;
-            cursor: pointer;
-            font-size: .9rem;
-        }
-        .custom-button:hover {
-            box-shadow: none;
-            left: 0;
-            top: 0;
-            transition-duration:  .2s;
-            background-color: #ebf3ff;
-        }
-        .button-container {
-            display: flex;
-            min-width: 400px;
-            margin-left: auto;
-            justify-content: space-between;
-            align-content: center;
-        }
-        li > .custom-button {
-            display: block;
-            width: fit-content;
-            margin: 0 auto;
-        }
-        .display-container {
-            max-width: 80%;
-        }
-        .section {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-            border: 1px dotted #adadad; /* 수정필요 */
-            width: 80vw;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .list-head {
-            background-color: rgba(159, 159, 159, 0.16);
-            border: 1px solid #b6b6b6;
-            font-weight: 600;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-
-        }
-        .list-container {
-            border: 1px solid #b6b6b6;
-            border-bottom-left-radius: 10px;
-            border-bottom-right-radius: 10px;
-            overflow: hidden;
-        }
-        .list-header {
-        }
-    </style>
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-<div class="section">
-    <h1>예약 완료 페이지</h1>
-    <p>예약이 완료되었습니다!</p>
-    <div>예약 내역 확인</div>
-    <div>
-        <ul>
-            <li th:text="${reservationDto.getGuestCount()}"></li>
-            <li th:text="${reservationDto.getReservationTime()}"></li>
-            <li th:text="${reservationDto.getReservationStatus()}"></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
+<div class="section" id="reservationComplete">
+    <div class="flex-box">
+        <div class="box-header">
+            <svg class="check-svg" width="100" height="100" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" stroke="green" stroke-width="2"/>
+                <path d="M8 12L11 15L16 9" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <h1>예약이 완료되었습니다!</h1>
+        </div>
+        <ul class="reservation-complete-body">
+            <li>
+<!--                reservationdto를 바로 반환하지 말고 한번 가공하기 -->
+                <span>예약 일시</span>
+                <span th:text="${reservationDto.getReservationTime()}">3234980:90283928TD</span>
+            </li>
+            <li>
+                <span>매장 명</span>
+                <span th:text="${reservationDto}">황보네 옆가게</span>
+            </li>
+            <li>
+                <span>예약 인원</span>
+                <span th:text="${reservationDto.getGuestCount()} + ' 명'">2 명</span>
+            </li>
         </ul>
+                <p class="info-required">당일 예약 시간 <strong>10분 전</strong> 까지 매장 키오스크로 체크인을 완료하셔야 합니다.</p>
+        <div></div>
     </div>
 </div>
 </body>

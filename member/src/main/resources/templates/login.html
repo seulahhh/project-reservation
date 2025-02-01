@@ -1,35 +1,50 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Login</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+
 </head>
 <body>
 
-<!--<form th:if="${userRole.equals('MANAGER')}" th:action="@{/manager/login}" method="post">-->
 
+<div class="section" id="login">
+    <div class="flex-box">
+        <div class="display-container">
+            <form th:if="${isCustomer}" th:action="@{/customer/login}" method="post">
+                <div>
+                    <label for="cname">이메일</label>
+                    <input type="text" id="cname" name="username" required>
+                </div>
+                <div>
+                    <label for="cpassword">비밀번호</label>
+                    <input type="password" id="cpassword" name="password" required>
+                </div>
+                <div class="button-container">
+                    <button class="submit-button" type="submit">Login</button>
+                </div>
+            </form>
 
-<form th:if="${isCustomer}" th:action="@{/customer/login}" method="post">
-    <div>
-        <label for="cname">Username:</label>
-        <input type="text" id="cname" name="username" required>
+            <form th:if="${isManager}" th:action="@{/manager/login}" method="post">
+                <div>
+                    <label for="musername">이메일</label>
+                    <input type="text" id="musername" name="username" required>
+                </div>
+                <div>
+                    <label for="mpassword">비밀번호</label>
+                    <input type="password" id="mpassword" name="password" required>
+                </div>
+                <div class="button-container">
+                    <button type="submit" class="submit-button">Login</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div>
-        <label for="cpassword">Password:</label>
-        <input type="password" id="cpassword" name="password" required>
-    </div>
-    <button type="submit">Login</button>
-</form>
+</div>
 
-<form th:if="${isManager}" th:action="@{/manager/login}" method="post">
-    <div>
-        <label for="musername">Username:</label>
-        <input type="text" id="musername" name="username" required>
-    </div>
-    <div>
-        <label for="mpassword">Password:</label>
-        <input type="password" id="mpassword" name="password" required>
-    </div>
-    <button type="submit">Login</button>
-</form>
 </body>
 </html>
