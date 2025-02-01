@@ -7,8 +7,8 @@ import com.project.member.service.ManagerService;
 import jakarta.servlet.ServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/manager")
@@ -35,14 +35,21 @@ public class ManagerApiController {
      * 등록한 매장이 없을 경우 매장 보기 ui X, 매장 등록하기 ui
      * - 매장의 리뷰도 함께
      */
+//    @GetMapping("/store")
+//    public ModelAndView managerStorePage () {
+//        ModelAndView mv = new ModelAndView();
+//        StoreDto storeDto = managerService.getManagerStore();
+//        mv.addObject(storeDto);
+//        mv.setViewName("store/store-detail");
+//        return mv;
+//    }
     @GetMapping("/store")
-    public ModelAndView managerStorePage () {
-        ModelAndView mv = new ModelAndView();
+    public String managerStorePage (Model model) {
         StoreDto storeDto = managerService.getManagerStore();
-        mv.addObject(storeDto);
-        mv.setViewName("store/store-detail");
-        return mv;
+        model.addAttribute(storeDto);
+        return "store/store-detail";
     }
+
 
     /**
      * 리뷰 삭제하기
