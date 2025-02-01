@@ -9,7 +9,6 @@ import org.springframework.context.annotation.ComponentScan;
 @RequiredArgsConstructor
 @ComponentScan(basePackages = "com.project")
 public class MemberApplication {
-
     public static void main (String[] args) {
         SpringApplication.run(MemberApplication.class, args);
     }

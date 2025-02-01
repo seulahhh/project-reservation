@@ -1,13 +1,17 @@
 package com.project.reservation.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.project.global.dto.form.ArrivalCheckForm;
 import com.project.global.dto.ReservationDto;
+import com.project.global.kafka.KafkaProducer;
 import com.project.reservation.exception.CustomException;
 import com.project.global.dto.form.CreateReservationForm;
 import com.project.global.dto.ReservationStatus;
 import com.project.reservation.persistence.entity.Reservation;
 import com.project.reservation.persistence.repository.reservation.ReservationRepository;
-import com.project.reservation.util.ReservationMapper;
+import com.project.reservation.util.DtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +27,8 @@ import static com.project.reservation.exception.ErrorCode.*;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
-    private final ReservationMapper reservationMapper;
+    private final DtoMapper dtoMapper;
+    private final KafkaProducer kafkaProducer;
 
     /**
      * 요청받은 예약을 DB 저장
@@ -31,8 +36,8 @@ public class ReservationService {
     @Transactional
     public ReservationDto createReservation (CreateReservationForm form) {
         getReservationAvailability(); // 예외처리 여기서 끝냄
-        Reservation reservation = reservationMapper.toEntity(form);
-        return reservationMapper.toDto(reservationRepository.save(reservation));
+        Reservation reservation = dtoMapper.toEntity(form);
+        return dtoMapper.toDto(reservationRepository.save(reservation));
     }
 
     /**
@@ -40,7 +45,14 @@ public class ReservationService {
      */
     public void notifyManagerOfRequest (Long managerId,
             ReservationDto reservationDto) {
-
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        try {
+            String msg = objectMapper.writeValueAsString(reservationDto);
+            kafkaProducer.sendMessage("toManager", msg, managerId);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -63,7 +75,7 @@ public class ReservationService {
     public List<ReservationDto> getCustomerReservations (Long customerId) {
         return reservationRepository.findByCustomerId(customerId)
                                     .stream()
-                                    .map(reservationMapper::toDto)
+                                    .map(dtoMapper::toDto)
                                     .toList();
 
     }
@@ -75,11 +87,10 @@ public class ReservationService {
 
         return reservationRepository.findByStoreId(storeId)
                                     .stream()
-                                    .map(reservationMapper::toDto)
+                                    .map(dtoMapper::toDto)
                                     .toList();
-
-
     }
+
     /**
      * arrival Status 업데이트
      */

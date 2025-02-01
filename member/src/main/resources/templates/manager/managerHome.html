@@ -12,20 +12,16 @@
 <body>
 <div class="section" id="managerHome">
     <div th:attr="data-manager-id=${managerId}"></div>
-    <!-- todo emailX 이름으로 가져오기-->
     <p th:text="${name}"></p>
     <p>님 안녕하세요!</p>
     <div class="button-container">
         <form action="/manager/store" method="post">
             <button type="button" th:method="post"></button>
         </form>
-        <a class="submit-button" href="/manager/store">매장 관리</a>
-        <a class="submit-button" href="/manager/store/new">매장 등록 하기</a>
+        <a class="submit-button" th:if="${hasStore}" href="/manager/store">매장 관리</a>
+        <a class="submit-button" th:if="${!hasStore}" href="/manager/store/new">매장 등록 하기</a>
     </div>
-    <!-- todo 매장을 가지고 있다 -> 매장 관리 버튼 노출 / 가진 매장이 없음 -> 매장 등록 버튼 노출-->
-
 </div>
-<!-- /.section -->
 <!-- todo 알림에 대한 ui 보류 -->
     <div id="notification" th:fragment="dynamic"
         th:replace="~{notification-fragment :: notification-message}" style="display: none">

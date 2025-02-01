@@ -4,12 +4,13 @@ package com.project.reservation.service;
 import com.project.global.dto.form.AddStoreForm;
 import com.project.global.dto.LocationDto;
 import com.project.reservation.exception.CustomException;
-import com.project.reservation.model.dto.form.StoreDto;
+import com.project.global.dto.StoreDto;
 import com.project.reservation.persistence.entity.QStore;
 import com.project.reservation.persistence.entity.Store;
 import com.project.reservation.persistence.repository.review.ReviewRepository;
 import com.project.reservation.persistence.repository.store.StoreRepository;
 import com.project.reservation.util.DistanceCalculator;
+import com.project.reservation.util.DtoMapper;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -30,6 +31,7 @@ public class StoreService {
     private final JPAQueryFactory queryFactory;
     private final StoreRepository storeRepository;
     private final ReviewRepository reviewRepository;
+    private final DtoMapper dtoMapper;
     QStore qStore = QStore.store; // todo 추후 테스트 과정에서 문제시 지역변수로 전환
 
     /**
@@ -155,7 +157,7 @@ public class StoreService {
     public StoreDto getStoreDetails (Long storeId) {
         Store store = storeRepository.findById(storeId)
                                      .orElseThrow(() -> new CustomException(STORE_NOT_FOUND));
-        return StoreDto.from(store);
+        return dtoMapper.toStoreDto(store);
     }
 
     /**
@@ -175,7 +177,7 @@ public class StoreService {
      */
     public List<StoreDto> storesToDtoList (List<Store> stores) {
         return stores.stream()
-                     .map(StoreDto::from)
+                     .map(dtoMapper::toStoreDto)
                      .toList();
     }
 
@@ -211,7 +213,7 @@ public class StoreService {
      * 매니저 Id로 매장 찾고 매장 dto 반환
      */
     public StoreDto findStoreByManagerId (Long managerId) {
-        return StoreDto.from(storeRepository.findStoreByManagerId(managerId)
+        return dtoMapper.toStoreDto(storeRepository.findStoreByManagerId(managerId)
                                             .orElseThrow(() -> new CustomException(STORE_NOT_FOUND)));
     }
 

@@ -1,21 +1,18 @@
 package com.project.member.web.view;
 
-import com.project.member.model.dto.LoginForm;
 import com.project.member.service.ManagerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequiredArgsConstructor
 @Slf4j
 public class HomeViewController {
     private final ManagerService managerService;
+
     /**
      * 메인페이지
      */
@@ -37,10 +34,9 @@ public class HomeViewController {
      * - view 페이지는 하나로 통일하고 경로에 따라 다른 ui 노출
      */
     @GetMapping("/customer/login")
-    public ModelAndView customerLogin(@ModelAttribute LoginForm form, ModelAndView mv) {
-        mv.addObject("isCustomer", true);
-        mv.setViewName("login");
-        return mv;
+    public String customerLogin(Model model) {
+        model.addAttribute("isCustomer", true);
+        return "login";
     }
 
     /**
@@ -48,36 +44,27 @@ public class HomeViewController {
      * - view 페이지는 하나로 통일하고 경로에 따라 다른 ui 노출
      */
     @GetMapping("/manager/login")
-    public ModelAndView managerLogin(ModelAndView mv) {
-        mv.addObject("isManager", true);
-        mv.setViewName("login");
-        return mv;
+    public String managerLogin(Model model) {
+        model.addAttribute("isManager", true);
+        return "login";
     }
 
     /**
      * Customer Home (로그인 후)
      */
     @GetMapping("/customer")
-    public ModelAndView customerHome() {
-        ModelAndView mv = new ModelAndView("customer/customerHome");
-        SecurityContext context = SecurityContextHolder.getContext();
-        String customerName = context.getAuthentication().getName();
-        mv.addObject("name", customerName);
-        return mv;
+    public String customerHome() {
+        return "customer/customerHome";
     }
 
     /**
      * Manager Home (로그인 후)
      */
     @GetMapping("/manager")
-    public ModelAndView managerHome() {
-        ModelAndView mv = new ModelAndView("manager/managerHome");
-        SecurityContext context = SecurityContextHolder.getContext();
-        Long managerId = managerService.getManagerId();
-        String managerName = context.getAuthentication().getName();
-        System.out.println("managerId" + managerId);
-        mv.addObject("name", managerName);
-        mv.addObject("managerId", managerId);
-        return mv;
+    public String managerHome (Model model) {
+        model.addAttribute("hasStore", managerService.hasRegistered());
+        model.addAttribute("managerId", managerService.getManagerId());
+        // todo 가진 매장이 있는지 확인하는 로직
+        return "manager/managerHome";
     }
 }

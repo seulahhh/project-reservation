@@ -22,7 +22,6 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
     implementation 'org.springframework.boot:spring-boot-starter'
-    implementation(project(':infrastructure'))
     //springweb
     implementation 'org.springframework.boot:spring-boot-starter-web'
 

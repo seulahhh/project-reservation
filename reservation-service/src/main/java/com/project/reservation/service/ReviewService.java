@@ -1,7 +1,8 @@
 package com.project.reservation.service;
 
+import com.project.global.dto.form.CreateReviewForm;
 import com.project.reservation.exception.CustomException;
-import com.project.reservation.model.dto.form.CreateReviewForm;
+//import com.project.reservation.model.dto.form.CreateReviewForm;
 import com.project.reservation.persistence.entity.Review;
 import com.project.reservation.persistence.entity.Store;
 import com.project.reservation.persistence.repository.reservation.ReservationRepository;
@@ -28,12 +29,9 @@ public class ReviewService {
      */
     @Transactional
     public boolean createReview (CreateReviewForm form) {
-        // 예약 내역 확인 후 리뷰 작성 가능
-
         Store store = storeRepository.findById(form.getStoreId())
                                      .orElseThrow(() -> new CustomException(STORE_NOT_FOUND));
 
-        // customerId와 예약내역의 customerId가 일치 하는지 확인
         Long customerId =
                 reservationRepository.findCustomerIdByReservationId(form.getReservationId())
                                                .orElseThrow(() -> new CustomException(RESERVATION_NOT_FOUND));
@@ -54,7 +52,6 @@ public class ReviewService {
 
         return true;
     }
-
 
     /**
      * 리뷰 수정하기
@@ -107,5 +104,4 @@ public class ReviewService {
         storeService.updateStoreRating(store.getId());
         return true;
     }
-
 }
