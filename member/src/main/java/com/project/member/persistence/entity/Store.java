@@ -23,9 +23,8 @@ public class Store extends BaseEntity{
     @Builder.Default
     private Double rating = 0.0;
 
-    @OneToOne
-    @JoinColumn(name = "manager_id")
-    private Manager manager;
+    @Column(name = "manager_id")
+    private Long managerId;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "store", orphanRemoval = true)
     private List<Review> reviews;

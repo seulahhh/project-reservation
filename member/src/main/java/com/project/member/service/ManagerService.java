@@ -1,22 +1,27 @@
 package com.project.member.service;
 
+import com.project.member.exception.CustomException;
 import com.project.member.model.dto.StoreDto;
 import com.project.member.model.dto.form.AddStoreForm;
-import com.project.member.persistence.entity.Manager;
-import com.project.member.persistence.entity.QManager;
-import com.project.member.persistence.entity.Review;
-import com.project.member.persistence.entity.Store;
+import com.project.member.model.types.Message;
+import com.project.member.persistence.entity.*;
 import com.project.member.persistence.repository.ManagerRepository;
 import com.project.member.persistence.repository.ReviewRepository;
 import com.project.member.persistence.repository.StoreRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Objects;
 
+import static com.project.member.exception.ErrorCode.STORE_NOT_FOUND;
+import static com.project.member.exception.ErrorCode.USER_HAS_EXISTING_STORE;
+import static com.project.member.model.types.Message.ADD_COMPLETE;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 
@@ -33,23 +38,49 @@ public class ManagerService {
      * 자신의 매장 등록하기
      * Exception O
      */
+    //    @Transactional
+    //    public String addStore (AddStoreForm form) {
+    //        Long managerId = getManagerId();
+    //        if (storeRepository.findByManager_Id(managerId)
+    //                           .isPresent()) {
+    //            throw new RuntimeException("이미 등록한 매장이 있습니다."); // todo
+    //        }
+    //        Store store = Store.builder()
+    //                .name(form.getName())
+    //                .manager(getManagerFromId(managerId))
+    //                .number(form.getNumber())
+    //                .lat(form.getLat())
+    //                .lnt(form.getLnt())
+    //                .build();
+    //
+    //        storeRepository.save(store);
+    //        return store.getName();
+    //    }
+
+    /**
+     * 자신의 매장 등록하기
+     * 예외처리 O
+     */
     @Transactional
-    public String addStore (AddStoreForm form) {
+    public Message addStore (AddStoreForm form) {
         Long managerId = getManagerId();
-        if (storeRepository.findByManager_Id(managerId)
-                           .isPresent()) {
-            throw new RuntimeException("이미 등록한 매장이 있습니다."); // todo
+        if (!queryFactory.select(QStore.store)
+                         .from(QStore.store)
+                         .where(QStore.store.managerId.eq(managerId))
+                         .fetch()
+                         .isEmpty()) {
+            throw new CustomException(USER_HAS_EXISTING_STORE);
         }
         Store store = Store.builder()
                 .name(form.getName())
-                .manager(getManagerFromId(managerId))
+                .managerId(managerId)
                 .number(form.getNumber())
                 .lat(form.getLat())
                 .lnt(form.getLnt())
                 .build();
 
         storeRepository.save(store);
-        return store.getName();
+        return ADD_COMPLETE;
     }
 
     /**
@@ -58,13 +89,30 @@ public class ManagerService {
      * - 리뷰 리스트가 주가 됨
      * Exception O
      */
+    //    public StoreDto getManagerStore () {
+    //        Long managerId = getManagerId();
+    //        Store store = storeRepository.findByManager_Id(managerId)
+    //                                     .orElseThrow(() -> new
+    //                                     RuntimeException(
+    //                                             "매장 정보가 없습니다"));
+    //        // todo CustomException
+    //        System.out.println(store.getReviews());
+    //        return StoreDto.from(store);
+    //    }
+
+    /**
+     * manager Id로 매니저가 등록한 매장 가져오기 (1:1)
+     * 예외처리 O
+     */
     public StoreDto getManagerStore () {
         Long managerId = getManagerId();
-        Store store = storeRepository.findByManager_Id(managerId)
-                                     .orElseThrow(() -> new RuntimeException(
-                                             "매장 정보가 없습니다"));
-        // todo CustomException
-        System.out.println(store.getReviews());
+        Store store = queryFactory.select(QStore.store)
+                                  .from(QStore.store)
+                                  .where(QStore.store.managerId.eq(managerId))
+                                  .fetchOne();
+        if (store == null) {
+            throw new CustomException(STORE_NOT_FOUND);
+        }
         return StoreDto.from(store);
     }
 
@@ -91,9 +139,8 @@ public class ManagerService {
         Review review = reviewRepository.findById(reviewId)
                                         .orElseThrow(() -> new RuntimeException("리뷰가 존재하지 않습니다.")); // todo exception처리 수정필요
         Long loginId = getManagerId();
-        if (review.getStore()
-                  .getManager()
-                  .getId() != loginId) {
+        if (!Objects.equals(review.getStore()
+                                  .getManagerId(), loginId)) {
             // 권한 없으면
             throw new RuntimeException("리뷰를 삭제할 수 있는 권한이 없습니다"); // todo
             // customExcpeton
@@ -112,12 +159,22 @@ public class ManagerService {
                                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다")); // todo customeException
     }
 
+    /**
+     * storeId로 managerId 가져오기
+     *
+     * @param storeId
+     * @return managerId
+     */
     public Long getManagerIdFromStoreId (Long storeId) {
-        return queryFactory.select(qManager.id)
-                                       .from(qManager)
-                                       .where(qManager.store.id.eq(storeId))
-                                       .fetchFirst();
+        Long managerId = queryFactory.select(qManager.id)
+                                     .from(qManager)
+                                     .where(qManager.storeId.eq(storeId))
+                                     .fetchOne();
 
+        if (managerId == null) {
+            throw new RuntimeException("잘못된 접근 요청");
+        }
+        return managerId;
     }
 
     /**
@@ -128,10 +185,10 @@ public class ManagerService {
         String email = SecurityContextHolder.getContext()
                                             .getAuthentication()
                                             .getName();
-
-        Manager manager = managerRepository.findByEmail(email)
-                                           .orElseThrow(() -> new RuntimeException("인증정보가 잘못되었습니다")); // todo 거의 없을 일 같지만 일단 보류
-
-        return manager.getId();
+        log.info("security context holder를 통해 얻은 email: {}", email);
+        return queryFactory.selectFrom(qManager)
+                           .where(qManager.email.eq(email))
+                           .select(qManager.id)
+                           .fetchOne();
     }
 }

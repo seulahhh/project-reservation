@@ -13,9 +13,4 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
 
     @EntityGraph(attributePaths = {"reviews"}, type = EntityGraph.EntityGraphType.LOAD)
     Optional<Store> findById(Long storeId);
-
-    @EntityGraph(attributePaths = {"reviews"}, type = EntityGraph.EntityGraphType.LOAD)
-    Optional<Store> findByManager_Id (Long managerId);
-
-    Long manager (Manager manager);
 }

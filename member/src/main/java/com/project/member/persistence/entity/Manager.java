@@ -30,8 +30,8 @@ public class Manager extends BaseEntity implements UserDetails  {
     private String name;
     private String phone;
 
-    @OneToOne(mappedBy = "manager")
-    private Store store;
+    @Column(name = "store_id", unique = true)
+    private Long storeId;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities () {
