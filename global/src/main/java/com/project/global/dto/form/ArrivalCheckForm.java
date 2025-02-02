@@ -5,9 +5,11 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class ArrivalCheckForm {
     private LocalDateTime checkAt;
     private Long reservationId;

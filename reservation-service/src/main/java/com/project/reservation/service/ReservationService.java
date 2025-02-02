@@ -3,21 +3,25 @@ package com.project.reservation.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.project.global.dto.form.ArrivalCheckForm;
+import com.project.global.dto.CompleteReservationDto;
 import com.project.global.dto.ReservationDto;
+import com.project.global.dto.ReservationStatus;
+import com.project.global.dto.form.ArrivalCheckForm;
+import com.project.global.dto.form.CreateReservationForm;
 import com.project.global.kafka.KafkaProducer;
 import com.project.reservation.exception.CustomException;
-import com.project.global.dto.form.CreateReservationForm;
-import com.project.global.dto.ReservationStatus;
 import com.project.reservation.persistence.entity.Reservation;
 import com.project.reservation.persistence.repository.reservation.ReservationRepository;
+import com.project.reservation.persistence.repository.store.StoreRepository;
 import com.project.reservation.util.DtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.project.global.dto.ReservationStatus.CONFIRMED;
 import static com.project.reservation.exception.ErrorCode.*;
@@ -29,22 +33,32 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final DtoMapper dtoMapper;
     private final KafkaProducer kafkaProducer;
+    private final StoreRepository storeRepository;
 
     /**
      * 요청받은 예약을 DB 저장
      */
     @Transactional
-    public ReservationDto createReservation (CreateReservationForm form) {
+    public CompleteReservationDto createReservation (
+            CreateReservationForm form) {
         getReservationAvailability(); // 예외처리 여기서 끝냄
-        Reservation reservation = dtoMapper.toEntity(form);
-        return dtoMapper.toDto(reservationRepository.save(reservation));
+        Reservation reservation =
+                reservationRepository.save(dtoMapper.toEntity(form));
+        String storeName = storeRepository.findById(form.getStoreId())
+                                          .get()
+                                          .getName();
+        return CompleteReservationDto.builder()
+                .storeName(storeName)
+                .reservationTime(reservation.getReservationTime())
+                .guestCount(reservation.getGuestCount())
+                .build();
     }
 
     /**
      * Manager에게 예약 승인 요청 알림 보내기
      */
     public void notifyManagerOfRequest (Long managerId,
-            ReservationDto reservationDto) {
+            CompleteReservationDto reservationDto) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         try {
@@ -63,7 +77,7 @@ public class ReservationService {
             ReservationStatus status) {
         Reservation reservation = getReservation(reservationId);
         if (reservation.getReservationStatus() == status) {
-            throw new RuntimeException("이미 처리된 요청입니다"); // todo
+            throw new RuntimeException("이미 처리된 요청입니다");
         }
         reservation.setReservationStatus(status);
         return true;
@@ -85,7 +99,7 @@ public class ReservationService {
      */
     public List<ReservationDto> getManagerReservations (Long storeId) {
 
-        return reservationRepository.findByStoreId(storeId)
+        return reservationRepository.findByStore_Id(storeId)
                                     .stream()
                                     .map(dtoMapper::toDto)
                                     .toList();
@@ -108,10 +122,10 @@ public class ReservationService {
         getReservation(reservationId).setReservationStatus(status);
     }
 
-    // ------------------------------------------ 비즈니스로직 끝
 
-    // 예약 가능한지 유효성 검사
-    // todo
+    /**
+     * 예약 가능한지 유효성 검사
+     */
     public boolean getReservationAvailability () {
 
         // 예외: 같은 매장에 같은 날 예약이 있으면 안된다.
@@ -125,6 +139,7 @@ public class ReservationService {
 
     // 예약 id로 예약 Entity 찾기
     public Reservation getReservation (Long id) {
+
         return reservationRepository.findById(id)
                                     .orElseThrow(() -> new CustomException(RESERVATION_NOT_FOUND));
     }
@@ -133,8 +148,7 @@ public class ReservationService {
     public void validateArrivalCheck (ArrivalCheckForm form) {
         Reservation reservation = getReservation(form.getReservationId());
         if (!Objects.equals(reservation.getCustomerId(),
-                            form.getCustomerId()) ||
-                !Objects.equals(reservation.getStoreId(), form.getStoreId())) {
+                            form.getCustomerId()) || !Objects.equals(reservation.getStore().getId(), form.getStoreId())) {
             throw new CustomException(RESERVATION_NOT_FOUND);
         }
         if (reservation.isHasArrived()) {
@@ -148,5 +162,17 @@ public class ReservationService {
                                      .plusMinutes(10))) {
             throw new CustomException(ARRIVAL_TIME_EXCEEDED);
         }
+    }
+
+    /**
+     * 특정 매장에 대한 특정 고객의 예약 내역 가져오기
+     */
+    public List<ReservationDto> getCustomerStoreReservations (Long customerId,
+            Long storeId) {
+        return reservationRepository.findByCustomerIdAndStoreIdAndReservationTimeIsAfter(customerId,
+                                                                                         storeId, LocalDateTime.now())
+                                    .stream()
+                                    .map(dtoMapper::toDto)
+                                    .collect(Collectors.toList());
     }
 }

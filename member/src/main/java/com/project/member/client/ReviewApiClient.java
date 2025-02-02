@@ -20,7 +20,7 @@ public class ReviewApiClient {
      */
     public String callCreateReview (CreateReviewForm createReviewForm) {
         webClient.post()
-                 .uri("/api/reviews") // fixme
+                 .uri("/api/reviews")
                  .header("Content-Type", "application/json")
                  .bodyValue(createReviewForm)
                  .retrieve()
@@ -33,9 +33,9 @@ public class ReviewApiClient {
      * 리뷰 수정 요청 api 호출
      */
     public String callUpdateReview (CreateReviewForm createReviewForm) {
-
+        Long reviewId = createReviewForm.getId();
         String res = webClient.put()
-                              .uri("/api/reviews")
+                              .uri("/api/customer/reviews")
                               .header("Content-Type", "application/json")
                               .bodyValue(createReviewForm)
                               .retrieve()
@@ -49,13 +49,13 @@ public class ReviewApiClient {
      */
     public String callDeleteReview (String role, Long reviewId) {
         String uri;
-        Long id;
+        Long userId;
         if (role.equals("ROLE_MANAGER")) {
-            id = managerService.getManagerId();
-            uri = "/api/managers/" + id + "/reviews/" + reviewId;
+            userId = managerService.getManagerId();
+            uri = "/api/manager/" + userId + "/reviews/" + reviewId;
         } else {
-            id = customerService.getCurrentCustomerId();
-            uri = "/api/customers/" + id + "/reviews/" + reviewId;
+            userId = customerService.getCurrentCustomerId();
+            uri = "/api/customer/" + userId + "/reviews/" + reviewId;
         }
         String res = webClient.delete()
                               .uri(uri)

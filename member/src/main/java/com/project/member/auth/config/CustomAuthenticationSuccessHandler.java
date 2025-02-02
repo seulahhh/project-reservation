@@ -2,15 +2,12 @@ package com.project.member.auth.config;
 
 import com.project.global.config.JwtTokenService;
 import com.project.global.util.JwtTokenProvider;
-import com.project.member.service.CustomerService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +21,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     private final JwtTokenService jwtTokenService;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        // 로그인 성공 후 처리할 로직 추가
         String email = authentication.getName();
         String role = authentication.getAuthorities()
                                                .stream()

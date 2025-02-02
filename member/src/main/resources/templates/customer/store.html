@@ -6,17 +6,17 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>매장 조회</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 <div class="section">
-    <div class="button-container" th:with="lat=${location.getLat()}, lnt=${location.getLnt()}">
+    <div class="button-container">
         <a class="custom-button"
-           th:href="@{/customer/stores?sortby=name&lat=${lat}&lnt=${lnt}}">이름순으로 조회</a>
+           th:href="@{/customer/stores(sortby='name', lat=${locationDto.lat}, lnt=${locationDto.lnt})}">이름순으로 조회</a>
         <a class="custom-button"
-           th:href="@{/customer/stores?sortby=rating&lat=${lat}&lnt=${lnt}}">별점순으로 조회</a>
+           th:href="@{/customer/stores(sortby='rating', lat=${locationDto.lat}, lnt=${locationDto.lnt})}">별점순으로 조회</a>
         <a class="custom-button"
-           th:href="@{/customer/stores?sortby=distance&lat=${lat}&lnt=${lnt}}">거리순으로 조회</a>
+           th:href="@{/customer/stores(sortby='distance', lat=${locationDto.lat}, lnt=${locationDto.lnt})}">거리순으로 조회</a>
     </div>
     <div id="resultBox" class="display-container">
         <ul class="list-header">
@@ -24,7 +24,7 @@
                 <ul class="flex-box">
                     <li>이름</li>
                     <li>별점</li>
-                    <li>거리 (km)</li>
+                    <li>거리</li>
                     <li></li>
                 </ul>
             </li>
@@ -32,12 +32,12 @@
         <ul id="listContainer" class="list-container">
             <li id="list-el" th:each="store : ${storeDtoList}">
                 <ul class="flex-box">
-                    <li th:text="${store.getName()}"></li>
-                    <li th:text="${store.getRating()}"></li>
-                    <li th:text="${store.getDistance()}"></li>
+                    <li th:text="${store.name}"></li>
+                    <li th:text="${store.rating== 0.0 ? '-' : store.rating + '점'}"></li>
+                    <li th:text="${store.distance} + 'km'"></li>
                     <li>
                         <a class="detail custom-button"
-                           th:href="@{/customer/stores/detail/{id}(id=${store.getId()})}">DETAILS</a>
+                           th:href="@{/customer/stores/{id}(id=${store.getId()})}">DETAILS</a>
                     </li>
                 </ul>
             </li>

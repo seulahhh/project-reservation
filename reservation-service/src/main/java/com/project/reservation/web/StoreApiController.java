@@ -63,9 +63,9 @@ public class StoreApiController {
             summary = "매니저가 매장을 등록하는 API"
     )
     @PostMapping("/stores")
-    public ResponseEntity<String> registerStore (@RequestBody AddStoreForm form) {
-        storeService.addStore(form);
-        return ResponseEntity.ok("ok");
+    public ResponseEntity<Long> registerStore (@RequestBody AddStoreForm form) {
+        Long storeId = storeService.addStore(form);
+        return ResponseEntity.ok(storeId);
     }
 
     @Operation(

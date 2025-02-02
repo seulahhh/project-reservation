@@ -1,5 +1,6 @@
 package com.project.reservation.web;
 
+import com.project.global.dto.CompleteReservationDto;
 import com.project.global.dto.form.ArrivalCheckForm;
 import com.project.global.dto.ReservationDto;
 import com.project.global.dto.ReservationStatus;
@@ -7,11 +8,13 @@ import com.project.global.dto.form.CreateReservationForm;
 import com.project.reservation.service.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -23,9 +26,10 @@ public class ReservationApiController {
             description = "customer가 매장에 새로운 예약을 시청하면 DB에 기본상태로 저장합니다"
     )
     @PostMapping("/reservation")
-    public ResponseEntity<ReservationDto> createReservation (
+    public ResponseEntity<CompleteReservationDto> createReservation (
             @RequestBody CreateReservationForm form) {
-        ReservationDto reservationDto = reservationService.createReservation(form);
+        CompleteReservationDto reservationDto = reservationService.createReservation(form);
+        log.info("managerId, from, Reservation Api Controller : {}", form.getManagerId());
         reservationService.notifyManagerOfRequest(form.getManagerId(), reservationDto);
         return ResponseEntity.ok(reservationDto);
     }
@@ -69,13 +73,23 @@ public class ReservationApiController {
             description = "키오스크를 통해 매장 도착 확인을 하면 도착 상태가 변경됩니다.\n" +
                     "매장 도착 확인과 동시에 customer의 예약에 대한 유효성 검사도 진행합니다."
     )
-    @PostMapping("/reservations/arrival-check")
+    @PostMapping("/kiosk/reservations/arrival-check")
     public ResponseEntity<String> updateArrivalStatus (
             @RequestBody ArrivalCheckForm form) {
+        log.info(form.toString());
         reservationService.updateArrivalStatus(form);
         return ResponseEntity.ok("ok");
     }
 
-    // 예약 취소하기  todo
-    // 예약 정보 수정하기 todo
+    /**
+     * 특정 매장에 대한 고객의 예약 내역 조회
+     */
+    @GetMapping("/kiosk/store/{storeId}/reservations/{customerId}")
+    public ResponseEntity<List<ReservationDto>> getCustomerStoreReservations (
+            @PathVariable Long storeId,
+            @PathVariable Long customerId) {
+        List<ReservationDto> reservationDtoList = reservationService.getCustomerStoreReservations(customerId, storeId);
+        return ResponseEntity.ok(reservationDtoList);
+    }
+
 }

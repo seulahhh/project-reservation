@@ -6,17 +6,16 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>매장 상세 정보</title>
+    <script defer src="/js/notification.js"></script>
     <link rel="stylesheet" href="/css/style.css">
     <!--    /manager/store  -->
 </head>
 <body>
 <div class="section" id="storeDetail">
+    <div id="connectSource" th:attr="data-manager-id=${managerId}"></div>
     <div class="flexbox">
         <div class="box-header">
             <h1 th:text="${storeDto.name}">매장명</h1>
-        </div>
-        <div class="reservation-button-container">
-            <a class="submit-button" th:href="@{/customer/reservation/{storeId}(storeId=${storeDto.id})}">예약하기</a>
         </div>
         <div>
             <ul class="store-detail-body">
@@ -41,14 +40,9 @@
                         <li class="review-rating" th:text="${review.rating}"></li>
                         <li class="review-body" th:text="${review.body}"></li>
                         <li>
-                            <form th:action="@{/customer/reviews/{reviewId}/delete(reviewId=${review.id})}" method="post">
+                            <form th:action="@{/manager/reviews/{reviewId}/delete(reviewId=${review.id})}" method="post">
                                 <div class="button-container">
                                     <button class="custom-button" type="submit">삭제</button>
-                                </div>
-                            </form>
-                            <form th:action="@{/customer/reviews/{reviewId}/edit(reviewId=${review.getId()})}" method="post">
-                                <div class="button-container">
-                                    <button class="custom-button" type="submit">수정</button>
                                 </div>
                             </form>
                         </li>
@@ -59,7 +53,9 @@
 
         </div>
     </div>
+    <div id="notification" th:fragment="dynamic"
+         th:replace="~{notification-fragment :: notification-message}" style="display: none">
+    </div>
 </div>
-
 </body>
 </html>

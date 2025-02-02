@@ -11,15 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Controller
 @RequiredArgsConstructor
 public class SseConnectController {
-
     private final AlarmService alarmService;
-
     @GetMapping("/sse-connect")
     public String sendConnectToServer(Model model) {
 //        ReservationDto reservationDto = alarmService.sendConnectToServer();
 //        model.addAttribute(reservationDto);
-
         return "notification-fragment :: notification-message";
     }
-
 }

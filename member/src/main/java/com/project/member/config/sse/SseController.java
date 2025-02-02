@@ -1,6 +1,7 @@
 package com.project.member.config.sse;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -13,8 +14,9 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 public class SseController {
     private final SseEmitterService sseEmitterService;
 
-    @GetMapping("/sse-connect/{id}")
-    public SseEmitter streamMessages(@PathVariable Long id) {
-        return sseEmitterService.streamMessages(id);
+    @GetMapping("/sse-connect/{managerId}")
+    public SseEmitter streamMessages (@PathVariable Long managerId, Model model) {
+        model.addAttribute(managerId);
+        return sseEmitterService.streamMessages(managerId);
     }
 }

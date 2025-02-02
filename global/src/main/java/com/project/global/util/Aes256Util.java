@@ -36,7 +36,6 @@ public class Aes256Util {
             e.printStackTrace();
             System.out.println("암호화 실패");
             return null;
-            // TODO
         }
     }
 
@@ -62,7 +61,6 @@ public class Aes256Util {
             e.printStackTrace();
             System.out.println("복호화 실패");
             return null;
-            // TODO
         }
     }
 }

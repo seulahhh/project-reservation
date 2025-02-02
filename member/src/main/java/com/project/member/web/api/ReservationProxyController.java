@@ -1,11 +1,15 @@
 package com.project.member.web.api;
 
+import com.project.global.dto.CompleteReservationDto;
 import com.project.global.dto.ReservationDto;
 import com.project.global.dto.ReservationStatus;
 import com.project.global.dto.form.ArrivalCheckForm;
 import com.project.global.dto.form.CreateReservationForm;
+import com.project.global.dto.form.ReservationListForm;
 import com.project.member.client.ReservationApiClient;
+import com.project.member.service.CustomerService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,18 +17,21 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class ReservationProxyController {
     private final ReservationApiClient reservationApiClient;
+    private final CustomerService customerService;
 
     /**
      * 예약하기
      */
-    @PostMapping("/reservation/{storeId}")
+    @PostMapping("/customer/reservation/{storeId}")
     public String createReservation (@PathVariable Long storeId,
             @ModelAttribute CreateReservationForm form, Model model) {
-        ReservationDto reservationDto = reservationApiClient.createReservation(form, storeId);
+        CompleteReservationDto reservationDto = reservationApiClient.createReservation(form, storeId);
+
         model.addAttribute(reservationDto);
         return "customer/reservation-complete";
     }
@@ -44,8 +51,8 @@ public class ReservationProxyController {
      */
     @GetMapping("/manager/reservations/{managerId}")
     public String getManagerReservations(@PathVariable Long managerId, Model model) {
-        List<ReservationDto> reservationList = reservationApiClient.getManagerReservations(managerId);
-        model.addAttribute(reservationList);
+        List<ReservationListForm> reservations = reservationApiClient.getManagerReservations(managerId);
+        model.addAttribute("reservations", reservations);
         return "manager/reservation-list";
     }
 
@@ -57,20 +64,14 @@ public class ReservationProxyController {
             @PathVariable Long reservationId,
             @PathVariable ReservationStatus status,
             @RequestHeader(value = HttpHeaders.REFERER, required = false) String referer) {
+        log.info("status: {}");
         reservationApiClient.updateReservationStatus(reservationId, status);
+
         if (referer != null) {
-            return "redirect:/" + referer;
+            return "redirect:" + referer;
         }
+
         return "manager/managerHome";
     }
 
-    /**
-     * 도착 확인 체크 하기
-     */
-    @PostMapping("/kiosk/check")
-    public String updateArrivalStatus(@ModelAttribute ArrivalCheckForm form) {
-        reservationApiClient.updateArrivalStatus(form);
-
-        return "customer/customerHome"; //fixme
-    }
 }

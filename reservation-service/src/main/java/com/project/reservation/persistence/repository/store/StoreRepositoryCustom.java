@@ -6,4 +6,6 @@ import java.util.Optional;
 
 public interface StoreRepositoryCustom {
     Optional<Store> findStoreByManagerId(Long managerId);
+
+    String findStoreName (Long storeId);
 }

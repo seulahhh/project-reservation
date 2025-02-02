@@ -34,7 +34,7 @@ public class ReviewApiController {
         return ResponseEntity.ok("ok");
     }
 
-    @PutMapping("/reviews")
+    @PutMapping("customer/reviews")
     public ResponseEntity<String> updateReview (@RequestBody CreateReviewForm form) {
         reviewService.updateReview(form);
         return ResponseEntity.ok("ok");

@@ -3,7 +3,7 @@ package com.project.member.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.project.global.dto.ReservationDto;
+import com.project.global.dto.CompleteReservationDto;
 import com.project.member.config.sse.SseEmitterService;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -23,7 +23,7 @@ public class KafkaConsumer {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         try {
-            ReservationDto reservationDto = objectMapper.readValue(record.value(), ReservationDto.class);
+            CompleteReservationDto reservationDto = objectMapper.readValue(record.value(), CompleteReservationDto.class);
             sseEmitterService.sendMessages(Long.parseLong(record.key()), reservationDto);
         } catch (JsonProcessingException e) {
             e.printStackTrace();

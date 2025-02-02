@@ -5,13 +5,25 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/static/css/style.css">
+
+    <style>
+    </style>
     <title>Manager Home</title>
+    <script src="../static/js/notification.js"></script>
 </head>
 <body>
-<div id="notification" th:fragment="notification-message" style="">
-    <h1>새로운 예약이 접수되었습니다!!</h1>
+<div id="notification" class="off" th:fragment="notification-message">
+    <div class="message-header">
+        새로운 예약이 접수되었습니다 !
+    </div>
     <div class="contents">
-        < reservation contents.....>
+        <p class="reservation-info">dfsdfadf</p>
+        <p>예약을 확인해 주세요!</p>
+        <div class="button-container">
+            <a class="custom-button" onclick="hide(this)" href="">취소</a>
+            <a class="custom-button" th:href="@{/manager/reservations/{managerId}(managerId=${managerId})}">확인</a>
+        </div>
     </div>
 </div>
 </body>

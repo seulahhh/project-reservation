@@ -1,5 +1,6 @@
 package com.project.member.web.view;
 
+import com.project.member.service.CustomerService;
 import com.project.member.service.ManagerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Slf4j
 public class HomeViewController {
     private final ManagerService managerService;
-
+    private final CustomerService customerService;
     /**
      * 메인페이지
      */
@@ -53,7 +54,8 @@ public class HomeViewController {
      * Customer Home (로그인 후)
      */
     @GetMapping("/customer")
-    public String customerHome() {
+    public String customerHome(Model model) {
+        model.addAttribute("customerId", customerService.getCurrentCustomerId());
         return "customer/customerHome";
     }
 
@@ -64,7 +66,6 @@ public class HomeViewController {
     public String managerHome (Model model) {
         model.addAttribute("hasStore", managerService.hasRegistered());
         model.addAttribute("managerId", managerService.getManagerId());
-        // todo 가진 매장이 있는지 확인하는 로직
         return "manager/managerHome";
     }
 }

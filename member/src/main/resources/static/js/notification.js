@@ -1,5 +1,5 @@
 
-    const managerId = document.getElementById("info").dataset
+    const managerId = document.getElementById("connectSource").dataset
         .managerId;
 
     console.log("managerId: " + managerId);
@@ -31,24 +31,19 @@
         // 재연결 시도 예시 (5초 후)
         setTimeout(function() {
             reconnectSSE();
-        }, 1500);
+        }, 500);
     };
 
     // 알림 표시 함수
     function showNotification(message) {
         const notificationDiv = document.getElementById('notification');
-        notificationDiv.querySelector('.contents').innerText = message;
+        let stringMsg = JSON.parse(message);
 
-        alert(message);
-        if (confirm(message)) {
-            // todo 모달 창으로 처리할지, 단순 알람으로 처리할 지 추후 상황 보고 결정
-        }
-        notificationDiv.style.display = 'block';
+        notificationDiv.classList.add('on');
 
-        // // 5초 후에 알림 숨기기
-        // setTimeout(function() {
-        //     notificationDiv.style.display = 'none';
-        // }, 5000);
+        const dateMsg = `날짜: ${stringMsg.reservationTime[0]}년 ${stringMsg.reservationTime[1]}월 ${stringMsg.reservationTime[2]}일`
+        const countMsg = `${stringMsg.guestCount}명`;
+        notificationDiv.getElementsByClassName("reservation-info").innerText = `${dateMsg} + ${countMsg}`;
     }
 
     // SSE 재연결 함수
@@ -75,6 +70,11 @@
             newEventSource.close();
             setTimeout(function() {
                 reconnectSSE();
-            }, 1500);
+            }, 500);
         };
+
+        function hide(el) {
+            el.classList.add("off");
+            el.classList.remove("on");
+        }
     }

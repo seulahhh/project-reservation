@@ -22,15 +22,15 @@
             <li>
 <!--                reservationdto를 바로 반환하지 말고 한번 가공하기 -->
                 <span>예약 일시</span>
-                <span th:text="${reservationDto.getReservationTime()}">3234980:90283928TD</span>
+                <span th:text="${completeReservationDto.reservationTime}"></span>
             </li>
             <li>
                 <span>매장 명</span>
-                <span th:text="${reservationDto}">황보네 옆가게</span>
+                <span th:text="${completeReservationDto.storeName}"></span>
             </li>
             <li>
                 <span>예약 인원</span>
-                <span th:text="${reservationDto.getGuestCount()} + ' 명'">2 명</span>
+                <span th:text="${completeReservationDto.guestCount} + ' 명'"></span>
             </li>
         </ul>
                 <p class="info-required">당일 예약 시간 <strong>10분 전</strong> 까지 매장 키오스크로 체크인을 완료하셔야 합니다.</p>

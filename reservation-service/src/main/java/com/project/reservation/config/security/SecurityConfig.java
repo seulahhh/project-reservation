@@ -20,7 +20,24 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenService jwtTokenService;
     @Bean
-    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
+    public SecurityFilterChain kiosksecurityFilterChain (HttpSecurity http) throws Exception {
+        return http
+                .csrf(csrf -> csrf.disable())
+                .securityMatcher("/api/kiosk/**")
+                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .formLogin(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(request -> {
+                                           request
+                                                   .anyRequest()
+                                                   .permitAll();
+                                       }
+                )
+                .build();
+    }
+    @Bean
+    public SecurityFilterChain  customFilterChain (HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -31,10 +48,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> {
                                            request
                                                   .anyRequest()
-                                                   .permitAll(); // fixme
-//                                                  .authenticated();
+                                                   .permitAll();
                                        }
                 )
                 .build();
     }
+
 }

@@ -3,10 +3,12 @@ package com.project.member.web.api;
 import com.project.global.dto.form.CreateReviewForm;
 import com.project.member.client.ReviewApiClient;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class ReviewProxyController {
@@ -15,14 +17,14 @@ public class ReviewProxyController {
     /**
      * 리뷰 작성하기
      */
-    @PostMapping("/customers/reviews")
+    @PostMapping("/customer/reviews")
     public String createReview (
-            @ModelAttribute  CreateReviewForm createReviewForm,
+            @ModelAttribute CreateReviewForm createReviewForm,
             @RequestHeader(value = HttpHeaders.REFERER, required = false) String referer) {
 
         reviewApiClient.callCreateReview(createReviewForm);
         if (referer != null) {
-            return "redirect:/" + referer;
+            return "redirect:" + referer;
         }
         return "customer/customerHome";
     }
@@ -30,7 +32,7 @@ public class ReviewProxyController {
     /**
      * 리뷰 수정하기
      */
-    @RequestMapping("/customers/reviews/{reviewId}/edit")
+    @RequestMapping("/customer/reviews/{reviewId}/edit")
     public String updateReview (
             @PathVariable Long reviewId,
             @ModelAttribute CreateReviewForm form,
@@ -38,7 +40,7 @@ public class ReviewProxyController {
         form.setId(reviewId);
         reviewApiClient.callUpdateReview(form);
         if (referer != null) {
-            return "redirect:/" + referer;
+            return "redirect:" + referer;
         }
         return "customer/customerHome";
     }
@@ -52,8 +54,9 @@ public class ReviewProxyController {
             @RequestHeader(value = HttpHeaders.REFERER, required = false) String referer) {
 
         reviewApiClient.callDeleteReview("ROLE_CUSTOMER", reviewId);
+        log.info("referer: {}", referer);
         if (referer != null) {
-            return "redirect:/" + referer;
+            return "redirect:" + referer;
         }
         return "customer/customerHome";
     }
@@ -68,7 +71,7 @@ public class ReviewProxyController {
 
         reviewApiClient.callDeleteReview("ROLE_MANAGER", reviewId);
         if (referer != null) {
-            return "redirect:/" + referer;
+            return "redirect:" + referer;
         }
         return "manager/managerHome";
     }

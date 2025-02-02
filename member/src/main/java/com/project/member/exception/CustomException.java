@@ -11,7 +11,7 @@ public class CustomException extends RuntimeException{
     private final int status;
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    // todo mapper 사용 안하면 제거
+
 
     public CustomException(ErrorCode errorCode) {
         super(errorCode.getDescription());

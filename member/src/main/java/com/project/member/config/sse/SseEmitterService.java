@@ -2,7 +2,9 @@ package com.project.member.config.sse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.project.global.dto.CompleteReservationDto;
 import com.project.global.dto.ReservationDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -12,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * sse 연결과 관련된 메세지를 전송하는 메서드 및
  * 받은 예약신청에 대한 메세지를 전송하는 메서드를 구현한 클래스
  */
+@Slf4j
 @Service
 public class SseEmitterService {
     private ConcurrentHashMap<Long, SseEmitter> emitters =
@@ -48,7 +51,7 @@ public class SseEmitterService {
 
         new Thread(() -> {
             try {
-                emitter.send("Welcome to the real-time notification system!");
+                log.info("ready to listen alarm");
                 emitters.put(clientId, emitter);
             } catch (Exception e) {
                 emitter.completeWithError(e);  // 오류 발생 시 처리
@@ -61,7 +64,7 @@ public class SseEmitterService {
     /**
      * Manager에게 알람 전송하기
      */
-    public boolean sendMessages(Long clientId, ReservationDto reservationDto) {
+    public boolean sendMessages(Long clientId, CompleteReservationDto reservationDto) {
         SseEmitter targetE;
         System.out.println(clientId);
 

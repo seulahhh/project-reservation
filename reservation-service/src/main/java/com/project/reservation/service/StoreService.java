@@ -32,7 +32,7 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final ReviewRepository reviewRepository;
     private final DtoMapper dtoMapper;
-    QStore qStore = QStore.store; // todo 추후 테스트 과정에서 문제시 지역변수로 전환
+    QStore qStore = QStore.store;
 
     /**
      * sort store
@@ -132,7 +132,7 @@ public class StoreService {
      * 예외처리 O
      */
     @Transactional
-    public boolean addStore (AddStoreForm form) {
+    public Long addStore (AddStoreForm form) {
         Long managerId = form.getManagerId();
         if (storeRepository.findStoreByManagerId(managerId)
                            .isPresent()) {
@@ -147,8 +147,8 @@ public class StoreService {
                 .lnt(form.getLnt())
                 .build();
 
-        storeRepository.save(store);
-        return true;
+        Store saved = storeRepository.save(store);
+        return saved.getId();
     }
 
     /**
@@ -201,12 +201,11 @@ public class StoreService {
     }
 
     /**
-     * 매장 id로 매장 찾고 매장 이름 반환
+     * 매장 id로 매장 찾기 매장 이름 반환
      */
-    public String getStoreNameById (Long storeId) {
-        Store store = storeRepository.findById(storeId)
-                                     .orElseThrow(() -> new CustomException(STORE_NOT_FOUND));// todo
-        return store.getName();
+    public Store getStoreById (Long storeId) {
+        return storeRepository.findById(storeId)
+                                     .orElseThrow(() -> new CustomException(STORE_NOT_FOUND));
     }
 
     /**

@@ -23,15 +23,14 @@ public class CustomUserDetailsService implements UserDetailsService {
         String requestUrl = httpServletRequest.getRequestURI();
         if (requestUrl.startsWith("/customer")) {
             return customerRepository.findByEmail(email)
-                                                  .orElseThrow(() ->
-            new UsernameNotFoundException("사용자를 찾을 수 없습니다")); // TODO customException 정의
-        }
-        else if (requestUrl.startsWith("/manager")) {
+                                     .orElseThrow(() ->
+                                                          new UsernameNotFoundException("사용자를 찾을 수 없습니다"));
+        }else if (requestUrl.startsWith("/manager")) {
             return managerRepository.findByEmail(email)
                                     .orElseThrow(() ->
-                                                         new UsernameNotFoundException("사용자를 찾을 수 없습니다")); // TODO customException 정의
+                                                         new UsernameNotFoundException("사용자를 찾을 수 없습니다"));
         } else {
-            throw  new UsernameNotFoundException("잘못된 로그인 접근 시도"); // TODO customException 정의
+            throw new UsernameNotFoundException("잘못된 로그인 접근 시도");
         }
     }
 }

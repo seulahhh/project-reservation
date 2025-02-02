@@ -5,7 +5,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Nanum Gothic";
     border-collapse: collapse;
 }
 
@@ -21,12 +20,20 @@ a {
 button {
     text-decoration: none;
 }
+input[type=password],
+input[type=text] {
+    padding: 0 15px;
+}
 .check-svg {
 }
 
 .flex-box {
     display: flex;
-
+    justify-content: center;
+    align-items: center;
+}
+ul.flex-box {
+    height:auto;
 }
 .flex-box > li {
     flex: 1;
@@ -68,7 +75,6 @@ button {
     margin-left: auto;
     justify-content: space-between;
     align-content: center;
-
 }
 
 li > .custom-button {
@@ -103,13 +109,13 @@ li > .custom-button {
 
 .display-container {
     max-width: 80%;
+    background-color: rgba(238, 238, 238, 0.47);
 }
 
 .section {
     display: flex;
     flex-direction: column;
     gap: 30px;
-    border: 1px dotted #adadad; /* 수정필요 */
     width: 80vw;
     margin: 0 auto;
     padding: 20px;
@@ -134,6 +140,7 @@ li > .custom-button {
 .list-header {
 }
 
+#main .display-container,
 #storeNew .display-container,
 #register .display-container,
 #storeDetail .display-container,
@@ -143,17 +150,19 @@ li > .custom-button {
     border: 1px solid #b6b6b6;
     border-radius: 10px;
 }
+#main .display-container > form,
 #register .display-container > form,
 #storeNew .display-container > form,
 #storeDetail .display-container > form,
 #login .display-container > form,
 #reservationNew .display-container > form{
-    min-width: 400px;
+    max-width: 600px;
     display: flex;
     flex-direction: column;
     gap: 20px;
     font-size: 18px;
 }
+#main .display-container > form > div,
 #storeNew .display-container > form > div,
 #register .display-container > form > div,
 #storeDetail .display-container > form > div,
@@ -164,15 +173,16 @@ li > .custom-button {
     justify-content: center;
     flex-direction: column;
 }
+#main .display-container > form > .button-container,
 #storeNew .display-container > form > .button-container,
 #register .display-container > form > .button-container,
 #storeDetail .display-container > form > .button-container,
 #reservationNew .display-container > form > .button-container,
 #login .display-container > form > .button-container {
-    flex-direction: row;
     padding-top: 20px;
 }
 
+#main .display-container > form input,
 #storeNew .display-container > form input,
 #register .display-container > form input,
 #storeDetail .display-container > form input,
@@ -326,4 +336,93 @@ li > .custom-button {
     margin-left: 0;
     justify-content: center;
     gap: 50px;
+}
+#storeDetail .reservation-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+#reservationList .state-buttons{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#reservationList li.ok ul li:last-of-type{
+    background-color: rgba(21, 92, 187, 0.09);
+}
+#reservationList li ul li:last-of-type p.complete {
+    display: none;
+}
+#reservationList li.ok ul li:last-of-type p.complete {
+    display: block;
+}
+#reservationList li.ok ul li:last-of-type button {
+    display: none;
+}
+
+
+#notification {
+    position: fixed;
+    bottom: 20px;
+    right: 0;
+    min-width: 400px;
+    max-width: 400px;
+    background-color: rgba(189, 189, 189, 0.15);
+    padding: 20px;
+    gap: 30px;
+    text-align: center;
+    border: 1px solid #c2c2c2;
+    opacity: 0;
+    transition-duration: .5s;
+}
+#notification.on {
+    opacity: 100%;
+    transition-duration: .5s;
+}
+#notification div {
+    width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+#notification .message-header {
+    font-size: 18px;
+    font-weight: 600;
+}
+#notification .contents {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+#notification .button-container {
+    margin-top: 10px;
+    flex-direction: row;
+    min-width: unset;
+    justify-content: center;
+    gap: 10px;
+}
+#reservationList li.not-confirmed ul li:last-of-type {
+    background-color: #9b9b9b;
+}
+#customerHome .button-container {
+    justify-content: center;
+    gap: 30px;
+    margin-left: 0;
+}
+#main .button-container {
+    gap: 10px;
+    margin-left: 0;
+    justify-content: center;
+}
+
+h1 {
+    text-align: right;
+    margin: 20px 20px;
+    font-size: 25px;
+}
+div.section {
+    height: 100vh;
+    /*background-color: #efefef;*/
+}
+body {
 }

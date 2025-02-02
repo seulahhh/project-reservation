@@ -5,9 +5,43 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script defer src="/js/notification.js"></script>
+    <title>예약 내역(manager 기준)</title>
 </head>
 <body>
-
+<div id="connectSource" th:attr="data-manager-id=${managerId}"></div>
+    <div class="section" id="reservationList">
+        <div id="resultBox" class="display-container">
+            <ul class="list-header">
+                <li class="list-head">
+                    <ul class="flex-box">
+                        <li>예약일시</li>
+                        <li>예약자명(email)</li>
+                        <li>예약인원</li>
+                        <li>예약확정</li>
+                    </ul>
+                </li>
+            </ul>
+            <ul id="listContainer" class="list-container">
+                <li id="list-el" th:class="${reservation.status.toString().equals('CONFIRMED')} ? 'ok' : ''" th:each="reservation : ${reservations}">
+                    <ul class="flex-box">
+                        <li th:text="${#temporals.format(reservation.reservationTime, 'yyyy-MM-dd HH:mm')}"></li>
+                        <li th:text="${reservation.customerName}+'('+${reservation.customerEmail}+')'"></li>
+                        <li th:text="${reservation.guestCount}"></li>
+                        <li class="state-buttons">
+                            <form th:action="@{/manager/reservations/{reservationId}/status/CONFIRMED(reservationId=${reservation.id})}" method="post">
+                                <button th:if="${!reservation.status.toString().equals('CONFIRMED')}" class="detail custom-button" type="submit">확정하기</button>
+                            </form>
+                            <p th:if="${reservation.status.toString().equals('CONFIRMED')}" th:text="${reservation.status.getMessage()}"></p>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div id="notification" th:fragment="dynamic"
+         th:replace="~{notification-fragment :: notification-message}" style="display: none">
+    </div>
 </body>
 </html>

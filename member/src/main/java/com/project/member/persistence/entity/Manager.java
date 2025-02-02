@@ -1,10 +1,7 @@
 package com.project.member.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -43,4 +40,7 @@ public class Manager extends BaseEntity implements UserDetails  {
         return email;
     }
 
+    public void addStoreId(Long storeId) {
+        this.storeId = storeId;
+    }
 }

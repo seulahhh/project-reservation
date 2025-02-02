@@ -6,13 +6,13 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Register Store</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 <div class="section" id="storeNew">
     <div class="flex-box">
         <div class="display-container">
-            <form th:action="@{/manager/store/new}" method="post">
+            <form th:action="@{/manager/stores}" method="post">
                 <div>
                     <label for="name">매장 이름</label>
                     <input type="text" id="name" name="name" required>
@@ -27,7 +27,7 @@
                 </div>
                 <div>
                     <label for="lat">매장 좌표 (LAT)</label>
-                    <input type="text" id="lat" required>
+                    <input type="text" id="lat" name="lat" required>
                 </div>
                 <div>
                     <label for="lnt">매장 좌표 (LNT)</label>

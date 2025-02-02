@@ -15,7 +15,7 @@ public class JwtTokenService {
     private final RedisTemplate<String, String> redisTemplate;
 
     public void storeToken(String email, String token) {
-        long expirationTimeInSeconds = 3600; // 만료시간 1시간으로 지정
+        long expirationTimeInSeconds = 1; // 만료시간 1시간으로 지정
 
         redisTemplate.opsForValue()
                      .set(email, token, expirationTimeInSeconds, TimeUnit.HOURS);

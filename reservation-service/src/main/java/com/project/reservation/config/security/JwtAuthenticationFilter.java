@@ -34,7 +34,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
         String token = resolveToken(request);
-
         log.info("is validated token : {}", jwtTokenProvider.validateToken(token));
         if (token != null && jwtTokenProvider.validateToken(token)) {
             log.info("검증 완료 후 SecurityContext 세팅 시작");
@@ -66,5 +65,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return token;
     }
-
 }

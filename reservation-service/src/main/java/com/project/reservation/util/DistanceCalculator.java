@@ -38,8 +38,9 @@ public class DistanceCalculator {
         NumberExpression<Double> distanceExpression =
                 Expressions.numberTemplate(Double.class, "6371 * {0}", acosExpression);
 
-        System.out.println("!!!!!!!!!!!!!! distanceExpression = " + distanceExpression);
-        return distanceExpression;
+        NumberExpression<Double> roundedExpression = Expressions.numberTemplate(Double.class, "round ({0}, 2)",
+                                   distanceExpression);
+        return roundedExpression;
     }
 }
 

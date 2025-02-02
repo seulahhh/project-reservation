@@ -3,6 +3,7 @@ package com.project.member.client;
 import com.project.global.dto.LocationDto;
 import com.project.global.dto.StoreDto;
 import com.project.global.dto.form.AddStoreForm;
+import com.project.member.service.ManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -13,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StoreApiClient {
     private final WebClient webClient;
+    private final ManagerService managerService;
 
     /**
      * 거리순으로 매장 리스트 가져오는 api 호출
@@ -24,7 +26,7 @@ public class StoreApiClient {
                                                    uriBuilder.path("/api/stores/sort-by-distance")
                                                              .queryParam("lat"
                                                                      , locationDto.getLat())
-                                                             .queryParam("age"
+                                                             .queryParam("lnt"
                                                                      , locationDto.getLnt())
                                                              .build())
                                       .retrieve()
@@ -44,7 +46,7 @@ public class StoreApiClient {
                                                    uriBuilder.path("/api/stores/sort-by-name")
                                                              .queryParam("lat"
                                                                      , locationDto.getLat())
-                                                             .queryParam("age"
+                                                             .queryParam("lnt"
                                                                      , locationDto.getLnt())
                                                              .build())
                                       .retrieve()
@@ -64,7 +66,7 @@ public class StoreApiClient {
                                                    uriBuilder.path("/api/stores/sort-by-rating")
                                                              .queryParam("lat"
                                                                      , locationDto.getLat())
-                                                             .queryParam("age"
+                                                             .queryParam("lnt"
                                                                      , locationDto.getLnt())
                                                              .build())
                                       .retrieve()
@@ -89,12 +91,14 @@ public class StoreApiClient {
     /**
      * 매장 등록하기 api 호출
      */
-    public String registerStore (AddStoreForm form) {
-        String res = webClient.post()
-                                .uri("/api/stores/")
+    public Long registerStore (AddStoreForm form) {
+        form.setManagerId(managerService.getManagerId());
+        Long storeId = webClient.post()
+                                .uri("/api/stores")
+                                .bodyValue(form)
                                 .retrieve()
-                                .bodyToMono(String.class)
+                                .bodyToMono(Long.class)
                                 .block();
-        return res;
+        return storeId;
     }
 }

@@ -5,13 +5,19 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Customer Home</title>
 </head>
 <body>
-<!-- todo emailX 이름으로 가져오기-->
-    <p th:text="${name}"></p>
-    <p>님 안녕하세요!</p>
-    <a href="/customer/stores/process">매장 보기</a>
+
+<div class="section" id="customerHome">
+    <h1>Customer Home</h1>
+    <div id="connectSource" th:attr="data-customer-id=${customerId}"></div>
+    <div class="button-container">
+        <a class="submit-button" href="/customer/stores/process">매장 보기</a>
+        <a class="submit-button" th:href="@{/customer/reservations/{customerId}(customerId=${customerId})}">예약내역 조회</a>
+    </div>
+</div>
+<!-- /.section -->
 </body>
 </html>
