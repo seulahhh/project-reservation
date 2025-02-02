@@ -1,4 +1,4 @@
-package com.project.member.service.api;
+package com.project.member.client;
 
 import com.project.global.dto.ReservationDto;
 import com.project.global.dto.ReservationStatus;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ReservationApiService {
+public class ReservationApiClient {
     private final WebClient webClient;
     private final ManagerService managerService;
     private final CustomerService customerService;

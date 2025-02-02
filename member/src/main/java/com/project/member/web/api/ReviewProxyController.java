@@ -1,7 +1,7 @@
 package com.project.member.web.api;
 
 import com.project.global.dto.form.CreateReviewForm;
-import com.project.member.service.api.ReviewApiService;
+import com.project.member.client.ReviewApiClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequiredArgsConstructor
 public class ReviewProxyController {
-    private final ReviewApiService reviewApiService;
+    private final ReviewApiClient reviewApiClient;
 
     /**
      * 리뷰 작성하기
@@ -20,7 +20,7 @@ public class ReviewProxyController {
             @ModelAttribute  CreateReviewForm createReviewForm,
             @RequestHeader(value = HttpHeaders.REFERER, required = false) String referer) {
 
-        reviewApiService.callCreateReview(createReviewForm);
+        reviewApiClient.callCreateReview(createReviewForm);
         if (referer != null) {
             return "redirect:/" + referer;
         }
@@ -36,7 +36,7 @@ public class ReviewProxyController {
             @ModelAttribute CreateReviewForm form,
             @RequestHeader(value = HttpHeaders.REFERER, required = false) String referer) {
         form.setId(reviewId);
-        reviewApiService.callUpdateReview(form);
+        reviewApiClient.callUpdateReview(form);
         if (referer != null) {
             return "redirect:/" + referer;
         }
@@ -51,7 +51,7 @@ public class ReviewProxyController {
             @PathVariable Long reviewId,
             @RequestHeader(value = HttpHeaders.REFERER, required = false) String referer) {
 
-        reviewApiService.callDeleteReview("ROLE_CUSTOMER", reviewId);
+        reviewApiClient.callDeleteReview("ROLE_CUSTOMER", reviewId);
         if (referer != null) {
             return "redirect:/" + referer;
         }
@@ -66,7 +66,7 @@ public class ReviewProxyController {
             @PathVariable Long reviewId,
             @RequestHeader(value = HttpHeaders.REFERER, required = false) String referer) {
 
-        reviewApiService.callDeleteReview("ROLE_MANAGER", reviewId);
+        reviewApiClient.callDeleteReview("ROLE_MANAGER", reviewId);
         if (referer != null) {
             return "redirect:/" + referer;
         }

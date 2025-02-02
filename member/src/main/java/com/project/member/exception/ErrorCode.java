@@ -8,9 +8,10 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
+    ALREADY_USER_EXISTS(HttpStatus.BAD_REQUEST, "이미 가입된 사용자가 존재합니다!"),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다"),
     LOAD_PAGE_FAIL(HttpStatus.NOT_FOUND, "페이지를 찾을 수 없습니다"),
-    STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "매장을 찾을 수 없습니다"),
+    STORE_NOT_FOUND(HttpStatus.BAD_REQUEST, "매장을 찾을 수 없습니다"),
     USER_HAS_EXISTING_STORE(HttpStatus.BAD_REQUEST, "사용자가 이미 등록한 매장이 있습니다")
     ;
 

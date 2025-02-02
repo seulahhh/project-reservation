@@ -1,4 +1,4 @@
-package com.project.member.service.api;
+package com.project.member.client;
 
 import com.project.global.dto.ReviewDto;
 import com.project.global.dto.form.CreateReviewForm;
@@ -10,7 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 @RequiredArgsConstructor
-public class ReviewApiService {
+public class ReviewApiClient {
     private final WebClient webClient;
     private final CustomerService customerService;
     private final ManagerService managerService;

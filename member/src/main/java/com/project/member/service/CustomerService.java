@@ -4,7 +4,6 @@ import com.project.global.dto.ReservationDto;
 import com.project.member.exception.CustomException;
 import com.project.member.model.dto.CustomerDto;
 import com.project.member.model.dto.LoginForm;
-import com.project.member.model.dto.form.CreateReservationForm;
 import com.project.member.persistence.entity.Customer;
 import com.project.member.persistence.repository.CustomerRepository;
 import com.project.member.util.mapper.CustomerMapper;

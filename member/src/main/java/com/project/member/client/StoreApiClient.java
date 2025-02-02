@@ -1,4 +1,4 @@
-package com.project.member.service.api;
+package com.project.member.client;
 
 import com.project.global.dto.LocationDto;
 import com.project.global.dto.StoreDto;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class StoreApiService {
+public class StoreApiClient {
     private final WebClient webClient;
 
     /**

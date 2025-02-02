@@ -1,41 +1,43 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-<!--    <style>-->
-<!--        #toast {-->
-<!--            visibility: hidden;-->
-<!--            min-width: 250px;-->
-<!--            margin-left: -125px;-->
-<!--            background-color: #333;-->
-<!--            color: #fff;-->
-<!--            text-align: center;-->
-<!--            border-radius: 2px;-->
-<!--            padding: 16px;-->
-<!--            position: fixed;-->
-<!--            z-index: 1001;-->
-<!--            left: 50%;-->
-<!--            bottom: 30px;-->
-<!--            font-size: 17px;-->
-<!--        }-->
+    <style>
+        #toast {
+            /*visibility: hidden;*/
+            min-width: 250px;
+            min-height: 150px;
+            margin-left: -125px;
+            background-color: #2f80bb;
+            color: #ffffff;
+            text-align: center;
+            border-radius: 2px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1001;
+            left: 50%;
+            bottom: 30px;
+            font-size: 17px;
+        }
 
-<!--        #toast.show {-->
-<!--            visibility: visible;-->
-<!--            -webkit-animation: fadein 0.5s, fadeout 0.5s 4.5s;-->
-<!--            animation: fadein 0.5s, fadeout 0.5s 4.5s;-->
-<!--        }-->
-<!--    </style>-->
+        #toast.show {
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 4.5s;
+            animation: fadein 0.5s, fadeout 0.5s 4.5s;
+        }
+    </style>
     <title>Document</title>
 </head>
 
 <body>
 <h1>manager에게 실시간 예약 요청 알림 페이지</h1>
-<!--<div id="toast">-->
-
+<div id="toast">
+    새로운 예약신청이 도착했습니다! 확인해주세요
+    <div>예약일시</div>
 </div>
+<button type="button" onclick="$('#toast').addClass('show')"></button>
 <script>
 
 </script>

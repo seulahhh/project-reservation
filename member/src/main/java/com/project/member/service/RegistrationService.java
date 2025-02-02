@@ -1,5 +1,7 @@
 package com.project.member.service;
 
+import com.project.member.exception.CustomException;
+import com.project.member.exception.ErrorCode;
 import com.project.member.persistence.entity.Customer;
 import com.project.member.persistence.entity.Manager;
 import com.project.member.persistence.repository.CustomerRepository;
@@ -9,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.project.member.exception.ErrorCode.ALREADY_USER_EXISTS;
 
 
 @Service
@@ -21,7 +25,7 @@ public class RegistrationService {
     @Transactional
     public void registerCustomer (SignupForm form) {
         if (customerRepository.existsByEmail(form.getEmail())) {
-            throw new IllegalArgumentException("Customer already exists!");
+            throw new CustomException(ALREADY_USER_EXISTS);
         }
         Customer customer = Customer.builder()
                 .name(form.getName())
@@ -36,7 +40,7 @@ public class RegistrationService {
     @Transactional
     public void registerManager (SignupForm form) {
         if (managerRepository.existsByEmail(form.getEmail())) {
-            throw new IllegalArgumentException("Manager already exists!");
+            throw new CustomException(ALREADY_USER_EXISTS);
         }
         Manager manager = Manager.builder()
                 .name(form.getName())

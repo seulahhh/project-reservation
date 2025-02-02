@@ -17,10 +17,6 @@ public class SignUp {
     @PostMapping("/register")
     public String register (
             @ModelAttribute SignupForm signupForm) {
-        System.out.println(signupForm);
-        System.out.println(signupForm.getRole());
-        System.out.println("name" + signupForm.getName());
-
         if (signupForm.getRole()
                       .equals("ROLE_MANAGER")) {
             registrationService.registerManager(signupForm);

@@ -1,4 +1,4 @@
-package com.project.member.client;
+package com.project.member.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
