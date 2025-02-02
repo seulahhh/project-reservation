@@ -23,6 +23,12 @@ private final QStore qStore = QStore.store;
         return Optional.ofNullable(store);
     }
 
-
+    @Override
+    public String findStoreName (Long storeId) {
+        return queryFactory.select(qStore.name)
+                               .from(qStore)
+                               .where(qStore.id.eq(storeId))
+                               .fetchOne();
+    }
 }
 

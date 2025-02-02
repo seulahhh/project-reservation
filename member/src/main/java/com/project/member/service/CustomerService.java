@@ -1,17 +1,13 @@
 package com.project.member.service;
 
-import com.project.global.dto.ReservationDto;
 import com.project.member.exception.CustomException;
 import com.project.member.model.dto.CustomerDto;
-import com.project.member.model.dto.LoginForm;
 import com.project.member.persistence.entity.Customer;
 import com.project.member.persistence.repository.CustomerRepository;
 import com.project.member.util.mapper.CustomerMapper;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 
 import static com.project.member.exception.ErrorCode.*;
@@ -48,11 +44,24 @@ public class CustomerService {
      * 현재 로그인한 customer가져오기 (dto)
      *
      */
-    public CustomerDto getCustomerDto() {
+    public CustomerDto getCurrentCustomerDto () {
         String email = SecurityContextHolder.getContext()
                                            .getAuthentication()
                                            .getName();
         Customer customer = customerRepository.findByEmail(email).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         return customerMapper.toDto(customer);
     }
+
+    /**
+     * customer Id 로 세부정보 가져오기
+     */
+    public CustomerDto getCustomerDtoFromId(Long customerId) {
+        Customer customer = customerRepository.findById(customerId)
+                                              .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        return customerMapper.toDto(customer);
+    }
+
+    /**
+     * 예약자 정보 주기
+     */
 }

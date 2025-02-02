@@ -6,7 +6,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script defer src="/js/notification.js"></script>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <title>Manager Home</title>
 </head>
 <body>
@@ -20,6 +20,7 @@
         </form>
         <a class="submit-button" th:if="${hasStore}" href="/manager/store">매장 관리</a>
         <a class="submit-button" th:if="${!hasStore}" href="/manager/store/new">매장 등록 하기</a>
+        <a class="submit-button" th:href="@{manager/reservations/{managerId}(managerId=${managerId})}">예약 확인</a>
     </div>
 </div>
 <!-- todo 알림에 대한 ui 보류 -->

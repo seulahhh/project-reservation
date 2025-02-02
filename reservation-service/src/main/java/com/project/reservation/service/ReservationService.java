@@ -3,14 +3,16 @@ package com.project.reservation.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.project.global.dto.form.ArrivalCheckForm;
+import com.project.global.dto.CompleteReservationDto;
 import com.project.global.dto.ReservationDto;
+import com.project.global.dto.ReservationStatus;
+import com.project.global.dto.form.ArrivalCheckForm;
+import com.project.global.dto.form.CreateReservationForm;
 import com.project.global.kafka.KafkaProducer;
 import com.project.reservation.exception.CustomException;
-import com.project.global.dto.form.CreateReservationForm;
-import com.project.global.dto.ReservationStatus;
 import com.project.reservation.persistence.entity.Reservation;
 import com.project.reservation.persistence.repository.reservation.ReservationRepository;
+import com.project.reservation.persistence.repository.store.StoreRepository;
 import com.project.reservation.util.DtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,22 +31,32 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final DtoMapper dtoMapper;
     private final KafkaProducer kafkaProducer;
+    private final StoreRepository storeRepository;
 
     /**
      * 요청받은 예약을 DB 저장
      */
     @Transactional
-    public ReservationDto createReservation (CreateReservationForm form) {
+    public CompleteReservationDto createReservation (
+            CreateReservationForm form) {
         getReservationAvailability(); // 예외처리 여기서 끝냄
-        Reservation reservation = dtoMapper.toEntity(form);
-        return dtoMapper.toDto(reservationRepository.save(reservation));
+        Reservation reservation =
+                reservationRepository.save(dtoMapper.toEntity(form));
+        String storeName = storeRepository.findById(form.getStoreId())
+                                          .get()
+                                          .getName();
+        return CompleteReservationDto.builder()
+                .storeName(storeName)
+                .reservationTime(reservation.getReservationTime())
+                .guestCount(reservation.getGuestCount())
+                .build();
     }
 
     /**
      * Manager에게 예약 승인 요청 알림 보내기
      */
     public void notifyManagerOfRequest (Long managerId,
-            ReservationDto reservationDto) {
+            CompleteReservationDto reservationDto) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         try {

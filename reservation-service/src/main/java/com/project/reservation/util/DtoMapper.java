@@ -1,5 +1,6 @@
 package com.project.reservation.util;
 
+import com.project.global.dto.CompleteReservationDto;
 import com.project.global.dto.ReservationDto;
 import com.project.global.dto.form.CreateReservationForm;
 import com.project.global.dto.ReviewDto;
@@ -55,7 +56,6 @@ public class DtoMapper {
                 .rating(store.getRating())
                 .build();
     }
-
 
     public ReviewDto toReviewDto(Review review) {
         return ReviewDto.builder()

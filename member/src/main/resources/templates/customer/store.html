@@ -6,17 +6,17 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>매장 조회</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 <div class="section">
-    <div class="button-container" th:with="lat=${location.getLat()}, lnt=${location.getLnt()}">
+    <div class="button-container">
         <a class="custom-button"
-           th:href="@{/customer/stores?sortby=name&lat=${lat}&lnt=${lnt}}">이름순으로 조회</a>
+           th:href="@{/customer/stores(sortby='name', lat=${locationDto.lat}, lnt=${locationDto.lnt})}">이름순으로 조회</a>
         <a class="custom-button"
-           th:href="@{/customer/stores?sortby=rating&lat=${lat}&lnt=${lnt}}">별점순으로 조회</a>
+           th:href="@{/customer/stores(sortby='rating', lat=${locationDto.lat}, lnt=${locationDto.lnt})}">별점순으로 조회</a>
         <a class="custom-button"
-           th:href="@{/customer/stores?sortby=distance&lat=${lat}&lnt=${lnt}}">거리순으로 조회</a>
+           th:href="@{/customer/stores(sortby='distance', lat=${locationDto.lat}, lnt=${locationDto.lnt})}">거리순으로 조회</a>
     </div>
     <div id="resultBox" class="display-container">
         <ul class="list-header">
@@ -37,7 +37,7 @@
                     <li th:text="${store.getDistance()}"></li>
                     <li>
                         <a class="detail custom-button"
-                           th:href="@{/customer/stores/detail/{id}(id=${store.getId()})}">DETAILS</a>
+                           th:href="@{/customer/stores/{id}(id=${store.getId()})}">DETAILS</a>
                     </li>
                 </ul>
             </li>

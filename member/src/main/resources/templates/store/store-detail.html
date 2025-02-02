@@ -6,7 +6,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>매장 상세 정보</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 <!--    /manager/store  -->
 </head>
 <body>
@@ -39,27 +39,21 @@
                         <li class="review-rating" th:text="${review.getRating()}"></li>
                         <li class="review-body" th:text="${review.getBody()}">dfdfdfdddddddfdfdfdddddddfdfdfdddddddfdfdfdddddddfdfdfdddddddfdfdfdddddddfdfdfdddddddfdfdfdddddd
                         <li>
-                            <form th:action="@{/manager/store/reviews/{reviewId}(reviewId=${review.getId()})}" th:method="delete">
+                            <form th:action="@{/customer/store/reviews/{reviewId}(reviewId=${review.getId()})}" th:method="delete">
                                 <input type="hidden">
                                 <div class="button-container">
                                     <button class="custom-button" sec:authorize="hasRole('ROLE_MANAGER')" type="submit">삭제</button>
                                     <button class="custom-button" sec:authorize="hasRole('ROLE_CUSTOMER')" type="submit">수정</button>
                                 </div>
                             </form>
-                        </li>
-                    </ul>
-                    <ul th:each="review : ${storeDto.getReviews()}" class="store-detail-reviews">
-                        <li class="review-title" th:text="${review.getTitle()}">eee</li>
-                        <li class="review-rating" th:text="${review.getRating()}"></li>
-                        <li class="review-body" th:text="${review.getBody()}">dfdfdfdddddddfdfdfdddddddfdfdfdddddddfdfdfdddddddfdfdfdddddddfdfdfdddddddfdfdfdddddddfdfdfdddddd
-                        <li>
-                            <form th:action="@{/manager/store/reviews/{reviewId}(reviewId=${review.getId()})}" th:method="delete">
+                            <form th:action="@{/customer/store/reviews/{reviewId}(reviewId=${review.getId()})}" th:method="delete">
                                 <input type="hidden">
                                 <div class="button-container">
-                                    <button class="custom-button" sec:authorize="hasRole('ROLE_MANAGER')" type="submit">삭제</button>
-                                    <button class="custom-button" sec:authorize="hasRole('ROLE_CUSTOMER')" type="submit">수정</button>
+                                <button class="custom-button" sec:authorize="hasRole('ROLE_MANAGER')" type="submit">삭제</button>
+                                <button class="custom-button" sec:authorize="hasRole('ROLE_CUSTOMER')" type="submit">수정</button>
                                 </div>
                             </form>
+
                         </li>
                     </ul>
                 </li>

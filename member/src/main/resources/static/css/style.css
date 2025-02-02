@@ -327,3 +327,25 @@ li > .custom-button {
     justify-content: center;
     gap: 50px;
 }
+#storeDetail .reservation-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+#reservationList .state-buttons{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#reservationList li.ok ul li:last-of-type{
+    background-color: rgba(21, 92, 187, 0.09);
+}
+#reservationList li ul li:last-of-type p.complete {
+    display: none;
+}
+#reservationList li.ok ul li:last-of-type p.complete {
+    display: block;
+}
+#reservationList li.ok ul li:last-of-type button {
+    display: none;
+}

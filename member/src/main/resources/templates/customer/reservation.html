@@ -6,13 +6,13 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>예약하는 페이지</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 <div class="section" id="reservationNew">
     <div class="flex-box">
         <div class="display-container">
-            <form th:action="@{/customer/reservation/7}" method="post">
+            <form th:action="@{/customer/reservation/{storeId}(storeId=${storeId})}" method="post">
                 <div>
                     <label for="reservationTime">예약 일시</label>
                     <input type="text" id="reservationTime" name="reservationTime" required>

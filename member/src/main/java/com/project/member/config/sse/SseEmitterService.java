@@ -2,6 +2,7 @@ package com.project.member.config.sse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.project.global.dto.CompleteReservationDto;
 import com.project.global.dto.ReservationDto;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -61,7 +62,7 @@ public class SseEmitterService {
     /**
      * Manager에게 알람 전송하기
      */
-    public boolean sendMessages(Long clientId, ReservationDto reservationDto) {
+    public boolean sendMessages(Long clientId, CompleteReservationDto reservationDto) {
         SseEmitter targetE;
         System.out.println(clientId);
 

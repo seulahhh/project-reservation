@@ -64,7 +64,6 @@ public class HomeViewController {
     public String managerHome (Model model) {
         model.addAttribute("hasStore", managerService.hasRegistered());
         model.addAttribute("managerId", managerService.getManagerId());
-        // todo 가진 매장이 있는지 확인하는 로직
         return "manager/managerHome";
     }
 }

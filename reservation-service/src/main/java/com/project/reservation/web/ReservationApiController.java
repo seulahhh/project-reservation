@@ -1,5 +1,6 @@
 package com.project.reservation.web;
 
+import com.project.global.dto.CompleteReservationDto;
 import com.project.global.dto.form.ArrivalCheckForm;
 import com.project.global.dto.ReservationDto;
 import com.project.global.dto.ReservationStatus;
@@ -23,9 +24,9 @@ public class ReservationApiController {
             description = "customer가 매장에 새로운 예약을 시청하면 DB에 기본상태로 저장합니다"
     )
     @PostMapping("/reservation")
-    public ResponseEntity<ReservationDto> createReservation (
+    public ResponseEntity<CompleteReservationDto> createReservation (
             @RequestBody CreateReservationForm form) {
-        ReservationDto reservationDto = reservationService.createReservation(form);
+        CompleteReservationDto reservationDto = reservationService.createReservation(form);
         reservationService.notifyManagerOfRequest(form.getManagerId(), reservationDto);
         return ResponseEntity.ok(reservationDto);
     }

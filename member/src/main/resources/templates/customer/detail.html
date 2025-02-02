@@ -1,13 +1,65 @@
 <!doctype html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>매장 상세 정보</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <!--    /manager/store  -->
 </head>
 <body>
-<p>리뷰페이지</p>
+<div class="section" id="storeDetail">
+    <div class="flexbox">
+        <div class="box-header">
+            <h1 th:text="${storeDto.name}">매장명</h1>
+        </div>
+        <div class="reservation-button-container">
+            <a class="submit-button" th:href="@{/customer/reservation/{storeId}(storeId=${storeDto.id})}">예약하기</a>
+        </div>
+        <div>
+            <ul class="store-detail-body">
+                <li>
+                    <span>매장 이름</span>
+                    <span th:text="${storeDto.name}"></span>
+                </li>
+                <li>
+                    <span>전화번호</span>
+                    <span th:text="${storeDto.number}"></span>
+                </li>
+                <li>
+                    <span>평점</span>
+                    <span th:text="${storeDto.rating}"></span>
+                </li>
+                <li>
+                    <span>매장 리뷰</span>
+                </li>
+                <li class="review-list">
+                    <ul th:each="review : ${storeDto.reviews}" class="store-detail-reviews">
+                        <li class="review-title" th:text="${review.title}"></li>
+                        <li class="review-rating" th:text="${review.rating}"></li>
+                        <li class="review-body" th:text="${review.body}"></li>
+                        <li>
+                            <form th:action="@{/customer/reviews/{reviewId}/delete(reviewId=${review.id})}" method="post">
+                                <div class="button-container">
+                                    <button class="custom-button" type="submit">삭제</button>
+                                </div>
+                            </form>
+                            <form th:action="@{/customer/reviews/{reviewId}/edit(reviewId=${review.getId()})}" method="post">
+                                <div class="button-container">
+                                    <button class="custom-button" sec:authorize="hasRole('ROLE_CUSTOMER')" type="submit">수정</button>
+                                </div>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+
+            </ul>
+
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

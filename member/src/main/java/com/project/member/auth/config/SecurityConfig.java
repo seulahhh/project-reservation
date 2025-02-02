@@ -31,7 +31,7 @@ public class SecurityConfig {
                 // 에만 적용됨
                 .authorizeHttpRequests(auth ->
                                                auth.requestMatchers(
-                                                       "/customer/login",
+                                                       "/customer/login","/static/css/**", "/static/js/**",
                                                        "/logout")
                                                    .permitAll()
                                                    .anyRequest()
@@ -57,7 +57,7 @@ public class SecurityConfig {
                 .securityMatcher("/manager/**") // 이 필터체인은 /customer/login 에만
                 // 적용됨
                 .authorizeHttpRequests(auth ->
-                                               auth.requestMatchers("/manager/login", "/logout")
+                                               auth.requestMatchers("/manager/login", "/logout" ,"/css/**", "/js/**")
                                                    .permitAll()
                                                    .anyRequest()
                                                    .hasRole("MANAGER"))
@@ -66,6 +66,7 @@ public class SecurityConfig {
                          .successHandler(customAuthenticationSuccessHandler)
 
                          // 후 기본 리다이렉션 경로
+                         
                          .failureUrl("/manager/login"); // 로그인 실패 시 경로
                 })
                 .httpBasic(httpBasic -> httpBasic.realmName("myapp"));
@@ -82,7 +83,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
 //                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/")
+                        .requestMatchers("/", "/css/**", "/js/**")
                         .permitAll()
                         .anyRequest()
                         .permitAll()

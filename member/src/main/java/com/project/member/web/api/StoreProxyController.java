@@ -5,6 +5,7 @@ import com.project.global.dto.StoreDto;
 import com.project.global.dto.form.AddStoreForm;
 import com.project.member.client.StoreApiClient;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class StoreProxyController {
@@ -22,20 +24,22 @@ public class StoreProxyController {
     /**
      * 조건에 맞게 정렬하여 매장 리스트 보여주기
      */
-    @GetMapping("/customers/stores")
+    @GetMapping("/customer/stores")
     public String getStoreListOrderByDistance (
-            @RequestParam String sortBy, @RequestParam Double lat,
+            @RequestParam String sortby, @RequestParam Double lat,
             @RequestParam Double lnt, Model model
     ) {
         List<StoreDto> list;
-        LocationDto location = LocationDto.of(lat, lnt);
-        if (sortBy.equals("distance")) {
-            list = storeApiClient.getStoreListOrderByDistance(location);
-        } else if (sortBy.equals("name")) {
-            list = storeApiClient.getStoreListOrderByName(location);
+        LocationDto locationDto = LocationDto.of(lat, lnt);
+        if (sortby.equals("distance")) {
+            list = storeApiClient.getStoreListOrderByDistance(locationDto);
+        } else if (sortby.equals("name")) {
+            list = storeApiClient.getStoreListOrderByName(locationDto);
         } else {
-            list = storeApiClient.getStoreListOrderByRating(location);
+            list = storeApiClient.getStoreListOrderByRating(locationDto);
         }
+        model.addAttribute("locationDto", locationDto);
+        log.info("locationDto: {}, {}", locationDto.getLat(), locationDto.getLnt());
         model.addAttribute(list);
         return "customer/store"; // todo
     }
@@ -45,8 +49,8 @@ public class StoreProxyController {
      */
     @GetMapping("/customer/stores/{storeId}")
     public String getStoreDetail(@PathVariable Long storeId, Model model) {
-        StoreDto storeDetail = storeApiClient.getStoreDetail(storeId);
-        model.addAttribute(storeDetail);
+        StoreDto storeDto = storeApiClient.getStoreDetail(storeId);
+        model.addAttribute(storeDto);
         return "customer/detail";
     }
 
@@ -59,4 +63,9 @@ public class StoreProxyController {
 
         return "redirect:/manager/store";
     }
+
+    /**
+     * 매니저가 자신의 매장 + 리뷰 확인하기
+     */
+
 }

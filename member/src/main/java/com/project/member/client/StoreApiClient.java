@@ -24,7 +24,7 @@ public class StoreApiClient {
                                                    uriBuilder.path("/api/stores/sort-by-distance")
                                                              .queryParam("lat"
                                                                      , locationDto.getLat())
-                                                             .queryParam("age"
+                                                             .queryParam("lnt"
                                                                      , locationDto.getLnt())
                                                              .build())
                                       .retrieve()
@@ -44,7 +44,7 @@ public class StoreApiClient {
                                                    uriBuilder.path("/api/stores/sort-by-name")
                                                              .queryParam("lat"
                                                                      , locationDto.getLat())
-                                                             .queryParam("age"
+                                                             .queryParam("lnt"
                                                                      , locationDto.getLnt())
                                                              .build())
                                       .retrieve()
@@ -64,7 +64,7 @@ public class StoreApiClient {
                                                    uriBuilder.path("/api/stores/sort-by-rating")
                                                              .queryParam("lat"
                                                                      , locationDto.getLat())
-                                                             .queryParam("age"
+                                                             .queryParam("lnt"
                                                                      , locationDto.getLnt())
                                                              .build())
                                       .retrieve()

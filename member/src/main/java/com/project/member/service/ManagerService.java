@@ -44,7 +44,7 @@ public class ManagerService {
                                      .fetchOne();
 
         if (managerId == null) {
-            throw new RuntimeException("잘못된 접근 요청");
+            throw new CustomException(STORE_NOT_FOUND);
         }
         return managerId;
     }

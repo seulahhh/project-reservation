@@ -2,7 +2,6 @@ package com.project.reservation.service;
 
 import com.project.global.dto.form.CreateReviewForm;
 import com.project.reservation.exception.CustomException;
-//import com.project.reservation.model.dto.form.CreateReviewForm;
 import com.project.reservation.persistence.entity.Review;
 import com.project.reservation.persistence.entity.Store;
 import com.project.reservation.persistence.repository.reservation.ReservationRepository;
@@ -12,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.Objects;
 
 import static com.project.reservation.exception.ErrorCode.*;
 
@@ -67,7 +66,6 @@ public class ReviewService {
         review.setRating(dto.getRating());
         reviewRepository.save(review);
         storeService.updateStoreRating(dto.getStoreId());
-
         return true;
     }
 
@@ -84,6 +82,7 @@ public class ReviewService {
         if (storeByReviewId.getId() != storeByManagerId.getId()) {
             throw new CustomException(REVIEW_DELETE_PERMISSION_DENIED);
         }
+        reviewRepository.deleteById(reviewId);
         storeService.updateStoreRating(storeByManagerId.getId());
         return true;
     }
@@ -97,10 +96,12 @@ public class ReviewService {
         Long customerIdByReviewId =
                 reviewRepository.findCustomerIdByReviewId(reviewId)
                                                     .orElseThrow(() -> new CustomException(REVIEW_NOT_FOUND));
-        if (customerId != customerIdByReviewId) {
+        if (!Objects.equals(customerId, customerIdByReviewId)) {
             throw new CustomException(REVIEW_DELETE_PERMISSION_DENIED);
         }
-        Store store = reviewRepository.findStoreByReviewId(reviewId).orElseThrow(() -> new CustomException(REVIEW_NOT_FOUND));
+        Store store = reviewRepository.findStoreByReviewId(reviewId)
+                                      .orElseThrow(() -> new CustomException(STORE_NOT_FOUND));
+        reviewRepository.deleteById(reviewId);
         storeService.updateStoreRating(store.getId());
         return true;
     }

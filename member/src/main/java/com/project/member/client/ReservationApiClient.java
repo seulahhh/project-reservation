@@ -1,9 +1,13 @@
 package com.project.member.client;
 
+import com.project.global.dto.CompleteReservationDto;
 import com.project.global.dto.ReservationDto;
 import com.project.global.dto.ReservationStatus;
 import com.project.global.dto.form.ArrivalCheckForm;
 import com.project.global.dto.form.CreateReservationForm;
+import com.project.global.dto.form.ReservationListForm;
+import com.project.member.model.dto.CustomerDto;
+import com.project.member.persistence.entity.Customer;
 import com.project.member.service.CustomerService;
 import com.project.member.service.ManagerService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,22 +29,19 @@ public class ReservationApiClient {
      * 예약하기
      * API 호출
      */
-    public ReservationDto createReservation (CreateReservationForm form,
+    public CompleteReservationDto createReservation (CreateReservationForm form,
             Long storeId) {
         System.out.println(form.toString());
         form.setCustomerId(customerService.getCurrentCustomerId());
         form.setManagerId(managerService.getManagerIdFromStoreId(storeId));
         form.setStoreId(storeId);
-        String email = SecurityContextHolder.getContext()
-                                            .getAuthentication()
-                                            .getName();
-        ReservationDto res = webClient.post()
+        CompleteReservationDto res = webClient.post()
                                       .uri("/api/reservation")
                                       .header("Content-Type", "application" +
                                               "/json")
                                       .bodyValue(form)
                                       .retrieve()
-                                      .bodyToMono(ReservationDto.class)
+                                      .bodyToMono(CompleteReservationDto.class)
                                       .block();
         return res;
     }
@@ -63,7 +65,7 @@ public class ReservationApiClient {
      * Manager가 본인매장
      * 예약 조회하기 API 호출
      */
-    public List<ReservationDto> getManagerReservations (Long managerId) {
+    public List<ReservationListForm> getManagerReservations (Long managerId) {
         Long storeId = managerService.getStoreIdFromManagerId(managerId);
         List<ReservationDto> res = webClient.get()
                                             .uri("/api/manager/reservations" +
@@ -72,7 +74,22 @@ public class ReservationApiClient {
                                             .bodyToFlux(ReservationDto.class)
                                             .collectList()
                                             .block();
-        return res;
+        assert res != null;
+        List<ReservationListForm> reservationListForms = res.stream()
+                                                            .map(dto -> {
+                                                   CustomerDto customer =
+                                                           customerService.getCustomerDtoFromId(dto.getCustomerId());
+                                                   return ReservationListForm.builder()
+                                                           .customerEmail(customer.getEmail())
+                                                           .customerName(customer.getName())
+                                                           .reservationTime(dto.getReservationTime())
+                                                           .guestCount(dto.getGuestCount())
+                                                           .id(dto.getId())
+                                                           .status(dto.getReservationStatus())
+                                                           .build();
+                                               })
+                                                            .toList();
+        return reservationListForms;
     }
 
     /**
@@ -98,4 +115,5 @@ public class ReservationApiClient {
                  .bodyToMono(String.class)
                  .block();
     }
+
 }
