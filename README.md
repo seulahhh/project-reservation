@@ -11,5 +11,7 @@
   - customer: /customer/..
   - manager: /manager/..
   - kiosk: /kiosk/..
-  
+
+- nginx 설정에 대해서는, 초기 API서버를 2개로 두었으나, 복잡도가 과하게 증가 하는 것 같아 간소화 하는 과정에서 사용하지 않기로 결정하였습니다.
+
 감사합니다!
